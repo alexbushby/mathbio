@@ -1,0 +1,50 @@
+\documentclass[12pt]{article}
+
+\input{4mbapreamble}
+\input{4mba2q}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FANCY HEADER AND FOOTER STUFF %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer parameters
+%%%\lhead{Student Name: \theblank{4cm}}
+%%%\chead{}
+%%%\rhead{Student Number: \theblank{3cm}}
+%%%\lfoot{\small\bfseries\ifnum\thepage<\pageref{LastPage}{CONTINUED\\on next page}\else{LAST PAGE}\fi}
+\lfoot{}
+\cfoot{{\small\bfseries Page \thepage\ of \pageref{LastPage}}}
+\rfoot{}
+\renewcommand\headrulewidth{0pt} % Removes funny header line
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{Sweave}
+\begin{document}
+\input{TheFourHumours_hw2-concordance}
+
+\begin{center}
+{\bf Mathematics 4MB3/6MB3 Mathematical Biology\\
+\smallskip
+2018 ASSIGNMENT 2}\\
+\medskip
+\underline{\emph{Group Name}}: \texttt{{\color{blue}Cream}}\\
+\medskip
+\underline{\emph{Group Members}}: {\color{blue}Eric Clapton, Ginger Baker, Jack Bruce}
+\end{center}
+
+\bigskip
+\noindent
+This assignment was due in class on \textcolor{red}{\bf Monday 5 February 2018 at 11:30am}.
+
+\section{Plot P\&I mortality in Philadelphia in 1918}
+
+\begin{enumerate}[(a)]
+
+\item \PhilaDataReceived
+
+\item \PhilaDataReadA
+\begin{Schunk}
+\begin{Sinput}
+> datafile <- "pim_us_phila_city_1918_dy.csv"
+> philadata <- read.csv(datafile)
