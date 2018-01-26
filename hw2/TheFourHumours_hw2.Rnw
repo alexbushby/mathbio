@@ -27,20 +27,15 @@
 \smallskip
 2018 ASSIGNMENT 2}\\
 \medskip
-\underline{\emph{Group Name}}: \texttt{{\color{blue}Cream}}\\
+\underline{\emph{Group Name}}: \texttt{{\color{blue}The Four Humours}}\\
 \medskip
-\underline{\emph{Group Members}}: {\color{blue}Eric Clapton, Ginger Baker, Jack Bruce}
+\underline{\emph{Group Members}}: {\color{blue}Claudia Tugulun, Alexei Kuzmin, Roger Zhang, Alex Bushby}
 \end{center}
-
-\bigskip
-\noindent
-This assignment was due in class on \textcolor{red}{\bf Monday 5 February 2018 at 11:30am}.
 
 \section{Plot P\&I mortality in Philadelphia in 1918}
 
 \begin{enumerate}[(a)]
 
-\item \PhilaDataReceived
 
 \item \PhilaDataReadA
 <<read.phila.data>>=
