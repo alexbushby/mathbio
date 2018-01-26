@@ -36,13 +36,18 @@
 
 \begin{enumerate}[(a)]
 
-
-\item \PhilaDataReadA
 <<read.phila.data>>=
 datafile <- "pim_us_phila_city_1918_dy.csv"
 philadata <- read.csv(datafile)
 philadata$date <- as.Date(philadata$date)
+##install.packages("tidyverse")
+##install.packages("readr")
+##install.packages("dplyr")
+##install.packages(")
 @ 
+
+
+
 \PhilaDataReadB
 
 \item \PhilaDataReproduceA
