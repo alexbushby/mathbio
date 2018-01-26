@@ -7,6 +7,7 @@
 %% FANCY HEADER AND FOOTER STUFF %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{fancyhdr,lastpage}
+\usepackage{graphicx}
 \pagestyle{fancy}
 \fancyhf{} % clear all header and footer parameters
 %%%\lhead{Student Name: \theblank{4cm}}
@@ -56,11 +57,15 @@ gg1<- (ggplot(philadata, aes(x=date, y = pim)) +
          labs(x = "Date", y = "P & I Deaths")
 )
 gg1
-pdf("plot1.pdf")
+pdf("images/plot1.pdf")
 dev.off()
 @ 
 
-\includegraphics{plot1.pdf}
+\begin{figure}
+\begin{center}
+\includegraphics{images/plot1.pdf}
+\end{center}
+\end{figure}
 
 
 \PhilaDataReadB
