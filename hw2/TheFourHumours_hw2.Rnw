@@ -43,9 +43,24 @@ philadata$date <- as.Date(philadata$date)
 ##install.packages("tidyverse")
 ##install.packages("readr")
 ##install.packages("dplyr")
-##install.packages(")
+##install.packages("tidyr")
+library(tidyverse)
+library(readr)
+theme_set(theme_bw())
+library(dplyr)
+library(tidyr)
+library()
+gg1<- (ggplot(philadata, aes(x=date, y = pim)) + 
+         geom_line() + 
+         geom_point(colour = "black", fill = "red", shape = 21) + 
+         labs(x = "Date", y = "P & I Deaths")
+)
+gg1
+pdf("plot1.pdf")
+dev.off()
 @ 
 
+\includegraphics{plot1.pdf}
 
 
 \PhilaDataReadB
