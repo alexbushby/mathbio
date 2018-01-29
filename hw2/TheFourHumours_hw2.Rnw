@@ -1,5 +1,7 @@
 \documentclass[12pt]{article}
 
+\usepackage{graphicx}
+
 \input{4mbapreamble}
 \input{4mba2q}
 
@@ -7,7 +9,6 @@
 %% FANCY HEADER AND FOOTER STUFF %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{fancyhdr,lastpage}
-\usepackage{graphicx}
 \pagestyle{fancy}
 \fancyhf{} % clear all header and footer parameters
 %%%\lhead{Student Name: \theblank{4cm}}
@@ -37,7 +38,7 @@
 
 \begin{enumerate}[(a)]
 
-<<read.phila.data>>=
+<<>>=
 datafile <- "pim_us_phila_city_1918_dy.csv"
 philadata <- read.csv(datafile)
 philadata$date <- as.Date(philadata$date)
@@ -50,21 +51,19 @@ library(readr)
 theme_set(theme_bw())
 library(dplyr)
 library(tidyr)
-library()
-gg1<- (ggplot(philadata, aes(x=date, y = pim)) + 
+gg1 <- (ggplot(philadata, aes(x=date, y = pim)) + 
          geom_line() + 
          geom_point(colour = "black", fill = "red", shape = 21) + 
          labs(x = "Date", y = "P & I Deaths")
 )
-gg1
-pdf("images/plot1.pdf")
-dev.off()
 @ 
 
+
+
 \begin{figure}
-\begin{center}
-\includegraphics{images/plot1.pdf}
-\end{center}
+<<fig = TRUE>>=
+print(gg1)
+@
 \end{figure}
 
 
