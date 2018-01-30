@@ -23,7 +23,6 @@
 
 \usepackage{Sweave}
 \begin{document}
-\input{TheFourHumours_hw2-concordance}
 
 \begin{center}
 {\bf Mathematics 4MB3/6MB3 Mathematical Biology\\
@@ -38,6 +37,10 @@
 \section{Plot P\&I mortality in Philadelphia in 1918}
 
 \begin{enumerate}[(a)]
+
+\item \PhilaDataReceived
+
+\item \PhilaDataReadA
 
 \begin{Schunk}
 \begin{Sinput}
@@ -58,19 +61,9 @@
 +          geom_point(colour = "black", fill = "red", shape = 21) + 
 +          labs(x = "Date", y = "P & I Deaths")
 + )
-\end{Sinput}
-\end{Schunk}
-
-
-
-\begin{figure}
-\begin{Schunk}
-\begin{Sinput}
 > print(gg1)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{TheFourHumours_hw2-002}
-\end{figure}
 
 
 \PhilaDataReadB
@@ -81,6 +74,27 @@
   {\color{magenta}\dots beautiful graph here\dots\ and nicely commented code that produces it, either in a separate \texttt{.R} file or preceding the graph if this is a \texttt{knitr} script\dots}
   \end{proof}
   }
+  
+\begin{Schunk}
+\begin{Sinput}
+> gg2 <- (ggplot(philadata, aes(x=date, y = log(pim))) + 
++           geom_line() + 
++           labs(x="Date", y="Log Transformation of P & I Deaths")
++ )
+> print(gg2) ##can see from this graph that the straight part is from end of September to beginning of October
+> philadata1<-philadata[23:35,]
+> coef(lm(log(pim) ~ date, data = philadata1))
+\end{Sinput}
+\begin{Soutput}
+ (Intercept)         date 
+4517.0819254    0.2410217 
+\end{Soutput}
+\begin{Sinput}
+> gg3 <- gg2 + geom_abline(intercept = 4517.0819254, slope = 0.2410217, col = "red")
+> print(gg3)
+\end{Sinput}
+\end{Schunk}
+
 
 \PhilaDataReproduceB
 

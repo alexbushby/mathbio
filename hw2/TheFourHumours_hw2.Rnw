@@ -22,7 +22,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 
 \begin{center}
 {\bf Mathematics 4MB3/6MB3 Mathematical Biology\\
@@ -37,6 +36,10 @@
 \section{Plot P\&I mortality in Philadelphia in 1918}
 
 \begin{enumerate}[(a)]
+
+\item \PhilaDataReceived
+
+\item \PhilaDataReadA
 
 <<>>=
 datafile <- "pim_us_phila_city_1918_dy.csv"
@@ -56,15 +59,8 @@ gg1 <- (ggplot(philadata, aes(x=date, y = pim)) +
          geom_point(colour = "black", fill = "red", shape = 21) + 
          labs(x = "Date", y = "P & I Deaths")
 )
-@ 
-
-
-
-\begin{figure}
-<<fig = TRUE>>=
 print(gg1)
-@
-\end{figure}
+@ 
 
 
 \PhilaDataReadB
@@ -75,6 +71,23 @@ print(gg1)
   {\color{magenta}\dots beautiful graph here\dots\ and nicely commented code that produces it, either in a separate \texttt{.R} file or preceding the graph if this is a \texttt{knitr} script\dots}
   \end{proof}
   }
+  
+<<>>=
+
+gg2 <- (ggplot(philadata, aes(x=date, y = log(pim))) + 
+          geom_line() + 
+          labs(x="Date", y="Log Transformation of P & I Deaths")
+)
+print(gg2) ##can see from this graph that the straight part is from end of September to beginning of October
+
+philadata1<-philadata[23:35,]
+
+coef(lm(log(pim) ~ date, data = philadata1))
+
+gg3 <- gg2 + geom_abline(intercept = 4517.0819254, slope = 0.2410217, col = "red")
+print(gg3)
+@
+
 
 \PhilaDataReproduceB
 
