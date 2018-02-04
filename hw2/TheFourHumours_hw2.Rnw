@@ -42,6 +42,12 @@
 \item \PhilaDataReadA
 
 <<>>=
+
+@
+
+
+
+<<>>=
 datafile <- "pim_us_phila_city_1918_dy.csv"
 philadata <- read.csv(datafile)
 philadata$date <- as.Date(philadata$date)
@@ -59,11 +65,15 @@ gg1 <- (ggplot(philadata, aes(x=date, y = pim)) +
          geom_point(colour = "black", fill = "red", shape = 21) + 
          labs(x = "Date", y = "P & I Deaths")
 )
+@
+
+\begin{figure}
+<<>>=
 print(gg1)
 @ 
+\end{figure}
 
-
-\PhilaDataReadB
+\item \PhilaDataReadB
 
 \item \PhilaDataReproduceA
 
