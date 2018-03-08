@@ -26,17 +26,20 @@ Liverpool <-read.ymdc(liverpoolb)
 #####PART II#####
 
 time.plot<-function(dat,add){
-  X<-plot(dat$Week, dat$Counts, type = "l", xlab = "Time (Weeks)", ylab = "Cases of Measles")
-  lo <- loess(dat$Counts~dat$Week)
-  lin <- lines(predict(lo), col = "red")
-  print(X)
   if(add == TRUE){
-    lin
+    X<-plot(dat$Week, dat$Counts, type = "l", xlab = "Time (Weeks)", ylab = "Cases of Measles")
+    lo <- loess(dat$Counts~dat$Week)
+    lin <- lines(predict(lo), col = "red")
+  }
+  if(add == FALSE){
+    X<-plot(dat$Week, dat$Counts, type = "l", xlab = "Time (Weeks)", ylab = "Cases of Measles")
   }
 }
 
 time.plot(London, add=TRUE)
+time.plot(London, add = FALSE)
 time.plot(Liverpool, add=TRUE)
+time.plot(Liverpool, add=FALSE)
 
 #####PART III#####
 
