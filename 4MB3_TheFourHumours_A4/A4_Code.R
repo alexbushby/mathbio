@@ -12,6 +12,7 @@ read.ymdc <- function(dat){
   day <-dat[seq(3,length(dat),4)]
   date<-as.Date(paste(year, month, day, sep = "."), format = "%Y.%m.%d")
   count <-dat[seq(4,length(dat),4)]
+  count <- as.numeric(as.character(count))
   week <- as.numeric((date - date[1])/7)
   l <- list(date, count, week)
   L <- data.frame(l)
@@ -24,19 +25,19 @@ Liverpool <-read.ymdc(liverpoolb)
 
 #####PART II#####
 
-time.plot<-function(dat,smooth){
+time.plot<-function(dat,add){
   X<-plot(dat$Week, dat$Counts, type = "l", xlab = "Time (Weeks)", ylab = "Cases of Measles")
-  if(smooth == "TRUE"){
-    lo <- loess(dat$Counts~dat$Week)
-    line <- lines(predict(lo), col = "red")
-    print(X) 
-    print(line)
-  }
-  else{
-   print(X) 
+  lo <- loess(dat$Counts~dat$Week)
+  lin <- lines(predict(lo), col = "red")
+  print(X)
+  if(add == TRUE){
+    lin
   }
 }
-  
+
+time.plot(London, add=TRUE)
+time.plot(Liverpool, add=TRUE)
+
 #####PART III#####
 
 periodogram<-function()
