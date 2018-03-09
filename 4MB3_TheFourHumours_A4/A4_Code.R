@@ -1,10 +1,12 @@
-#####PART I#####
+####################QUESTION 1####################
+###############PART A###############
+###############PART I###############
 
 londona <- read.csv("meas_uk__lon_1944-94_wk.csv")
 liverpoola <- read.csv("meas_uk__lpl_1944-94_wk.csv")
 
 londonb <- londona[-c(1,2,3,4,5,6,7,8,9),] ##cleaning out not needed data
-liverpoolb <- liverpoola[-c(1,2,3,4,5,6,7,8,9),]
+liverpoolb <- liverpoola[-c(1,2,3,4,5,6,7,8,9),] ##cleaning out not needed data
 
 read.ymdc <- function(dat){
   year <- dat[seq(1,length(dat),4)]
@@ -23,7 +25,7 @@ read.ymdc <- function(dat){
 London <- read.ymdc(londonb)
 Liverpool <-read.ymdc(liverpoolb)
 
-#####PART II#####
+###############PART II###############
 
 time.plot<-function(dat,add){
   if(add == TRUE){
@@ -41,7 +43,27 @@ time.plot(London, add = FALSE)
 time.plot(Liverpool, add=TRUE)
 time.plot(Liverpool, add=FALSE)
 
-#####PART III#####
+###############PART III###############
 
-periodogram<-function()
+##needs to be completed
 
+periodogram<-function(dat, timemin, timemax){
+  
+}
+
+###############PART B###############
+
+##needs to be completed
+
+####################QUESTION 2####################
+###############PART A###############
+
+##needs to be completed
+
+SI.Gillepsie<-function(){
+  
+}
+
+###############PART B###############
+
+##needs to be completed
