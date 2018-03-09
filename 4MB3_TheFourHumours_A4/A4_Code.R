@@ -45,11 +45,14 @@ time.plot(Liverpool, add=FALSE)
 
 ###############PART III###############
 
-##needs to be completed
-
-periodogram<-function(dat, timemin, timemax){
-  
+periodogram<-function(dat, timemin = 1944-01-07, timemax = 1994-12-31){
+  v<-ts(dat$Counts, start = timemin, end = timemax, frequency = 1)
+  s<-spectrum(v, plot=FALSE)
+  plot(s$freq, s$spec, type = "l", xlab = "Frequency", ylab = "Power")
 }
+
+periodogram(London)
+periodogram(Liverpool, 1950-01-07, 1999-12-31)
 
 ###############PART B###############
 
