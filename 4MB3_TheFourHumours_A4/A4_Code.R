@@ -52,7 +52,7 @@ periodogram<-function(dat, timemin = 1944-01-07, timemax = 1994-12-31){
 }
 
 periodogram(London)
-periodogram(Liverpool, 1950-01-07, 1999-12-31)
+periodogram(Liverpool, 1990-01-01, 1999-01-01)
 
 ###############PART B###############
 
