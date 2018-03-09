@@ -43,5 +43,7 @@ time.plot(Liverpool, add=FALSE)
 
 #####PART III#####
 
-periodogram<-function()
+periodogram<-function(dat, timemin=0, timemax=){
+  myts<-ts(dat$Counts, start=timemin, end = timemax, frequency = 52)
+}
 
