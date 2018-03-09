@@ -1,4 +1,4 @@
-####################QUESTION 1#################### #
+####################QUESTION 1####################
 ###############PART A###############
 ###############PART I###############
 
@@ -26,9 +26,22 @@ London <- read.ymdc(londonb)
 Liverpool <-read.ymdc(liverpoolb)
 
 ###############PART II###############
-m.average <- function(dat,n){
-  dat$Week <- 1/(2*n+1) * sum(data$Week)
+m.average <- function(dat,n, colour = "red", line = "l"){
+  for (i in n+1:length(dat)){
+    X[i]<-filter(data$Counts[i-n]:data$Counts[i+n])
+  }
+  for (i in 1:n){
+    X[i]
+  }
+    dat$Counts[i] <- 1/(2*n+1) * sum(X)
+    return(dat$Counts)
 }
+
+London$Counts[1]
+  
+London$Count[i]
+
+m.average(London, 18)
 
 time.plot<-function(dat,add, n=20){
   if(add == TRUE){
@@ -52,14 +65,12 @@ sma(London$Counts, h = 20)
 
 ###############PART III###############
 
-periodogram<-function(dat, timemin = 1944-01-07, timemax = 1994-12-31){
-  v<-ts(dat$Counts, start = timemin, end = timemax, frequency = 1)
-  s<-spectrum(v, plot=FALSE)
-  plot(s$freq, s$spec, type = "l", xlab = "Frequency", ylab = "Power")
+periodogram<-function(dat, timemin = 0, timemax = 2660){
+  Uptodate <- London[London$Week >= timemin & London$Week <= timemax , ]
+  s<-spectrum(Uptodate$Counts, plot=FALSE)
+  per <-  1/(s$freq*52)
+  plot(per, s$spec, type = "l", xlab = "Period (Years)", ylab = "Power Spectrum", xlim = c(0,5))
 }
-
-periodogram(London)
-periodogram(Liverpool, 1990-01-01, 1999-01-01)
 
 ###############PART B###############
 
@@ -74,12 +85,10 @@ SI.Gillepsie<-function(){
   
 }
 
-<<<<<<< HEAD
 periodogram<-function(dat, timemin=0, timemax=){
   myts<-ts(dat$Counts, start=timemin, end = timemax, frequency = 52)
 }
-=======
+
 ###############PART B###############
->>>>>>> c6723832a21917d13a35d7d85264c7a77f683110
 
 ##needs to be completed
