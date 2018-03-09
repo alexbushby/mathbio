@@ -1,10 +1,12 @@
-#####PART I#####
+####################QUESTION 1####################
+###############PART A###############
+###############PART I###############
 
 londona <- read.csv("meas_uk__lon_1944-94_wk.csv")
 liverpoola <- read.csv("meas_uk__lpl_1944-94_wk.csv")
 
 londonb <- londona[-c(1,2,3,4,5,6,7,8,9),] ##cleaning out not needed data
-liverpoolb <- liverpoola[-c(1,2,3,4,5,6,7,8,9),]
+liverpoolb <- liverpoola[-c(1,2,3,4,5,6,7,8,9),] ##cleaning out not needed data
 
 read.ymdc <- function(dat){
   year <- dat[seq(1,length(dat),4)]
@@ -23,9 +25,12 @@ read.ymdc <- function(dat){
 London <- read.ymdc(londonb)
 Liverpool <-read.ymdc(liverpoolb)
 
-#####PART II#####
+###############PART II###############
+m.average <- function(dat,n){
+  dat$Week <- 1/(2*n+1) * sum(data$Week)
+}
 
-time.plot<-function(dat,add){
+time.plot<-function(dat,add, n=20){
   if(add == TRUE){
     X<-plot(dat$Week, dat$Counts, type = "l", xlab = "Time (Weeks)", ylab = "Cases of Measles")
     lo <- loess(dat$Counts~dat$Week)
@@ -41,9 +46,40 @@ time.plot(London, add = FALSE)
 time.plot(Liverpool, add=TRUE)
 time.plot(Liverpool, add=FALSE)
 
-#####PART III#####
+##install.packages("smooth")
+library(smooth)
+sma(London$Counts, h = 20)
 
+###############PART III###############
+
+periodogram<-function(dat, timemin = 1944-01-07, timemax = 1994-12-31){
+  v<-ts(dat$Counts, start = timemin, end = timemax, frequency = 1)
+  s<-spectrum(v, plot=FALSE)
+  plot(s$freq, s$spec, type = "l", xlab = "Frequency", ylab = "Power")
+}
+
+periodogram(London)
+periodogram(Liverpool, 1990-01-01, 1999-01-01)
+
+###############PART B###############
+
+##needs to be completed
+
+####################QUESTION 2####################
+###############PART A###############
+
+##needs to be completed
+
+SI.Gillepsie<-function(){
+  
+}
+
+<<<<<<< HEAD
 periodogram<-function(dat, timemin=0, timemax=){
   myts<-ts(dat$Counts, start=timemin, end = timemax, frequency = 52)
 }
+=======
+###############PART B###############
+>>>>>>> c6723832a21917d13a35d7d85264c7a77f683110
 
+##needs to be completed
