@@ -26,8 +26,11 @@ London <- read.ymdc(londonb)
 Liverpool <-read.ymdc(liverpoolb)
 
 ###############PART II###############
+m.average <- function(dat,n){
+  dat$Week <- 1/(2*n+1) * sum(data$Week)
+}
 
-time.plot<-function(dat,add){
+time.plot<-function(dat,add, n=20){
   if(add == TRUE){
     X<-plot(dat$Week, dat$Counts, type = "l", xlab = "Time (Weeks)", ylab = "Cases of Measles")
     lo <- loess(dat$Counts~dat$Week)
@@ -42,6 +45,10 @@ time.plot(London, add=TRUE)
 time.plot(London, add = FALSE)
 time.plot(Liverpool, add=TRUE)
 time.plot(Liverpool, add=FALSE)
+
+##install.packages("smooth")
+library(smooth)
+sma(London$Counts, h = 20)
 
 ###############PART III###############
 
