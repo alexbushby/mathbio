@@ -26,51 +26,33 @@ London <- read.ymdc(londonb)
 Liverpool <-read.ymdc(liverpoolb)
 
 ###############PART II###############
-m.average <- function(dat,n, colour = "red", line = "l"){
-  for (i in n+1:length(dat)){
-    X[i]<-filter(data$Counts[i-n]:data$Counts[i+n])
-  }
-  for (i in 1:n){
-    X[i]
-  }
-    dat$Counts[i] <- 1/(2*n+1) * sum(X)
-    return(dat$Counts)
-}
+m.average <- function(dat,n){filter(dat[,2],rep(1/(2*n+1),n), sides=2)}
 
-London$Counts[1]
-  
-London$Count[i]
-
-m.average(London, 18)
-
-time.plot<-function(dat,add, n=20){
+time.plot<-function(dat,add=FALSE, n=20, linetype = "l", colour = "red"){
   if(add == TRUE){
-    X<-plot(dat$Week, dat$Counts, type = "l", xlab = "Time (Weeks)", ylab = "Cases of Measles")
-    lo <- loess(dat$Counts~dat$Week)
-    lin <- lines(predict(lo), col = "red")
+    X<-plot(dat$Week, dat$Counts, type= linetype, xlab = "Time (Weeks)", ylab = "Cases of Measles")
+    lin <- lines(m.average(dat,n), col = colour)
   }
   if(add == FALSE){
-    X<-plot(dat$Week, dat$Counts, type = "l", xlab = "Time (Weeks)", ylab = "Cases of Measles")
+    X<-plot(dat$Week, dat$Counts, type = linetype, xlab = "Time (Weeks)", ylab = "Cases of Measles")
   }
 }
 
-time.plot(London, add=TRUE)
-time.plot(London, add = FALSE)
-time.plot(Liverpool, add=TRUE)
-time.plot(Liverpool, add=FALSE)
+time.plot(London, add = TRUE, n = 10, col = "red")
+time.plot(London, add = FALSE, n = 10, col = "red")
 
-##install.packages("smooth")
-library(smooth)
-sma(London$Counts, h = 20)
 
 ###############PART III###############
 
-periodogram<-function(dat, timemin = 0, timemax = 2660){
+periodogram<-function(dat, timemin = 0, timemax = 2660, linetype = "l", colour = "red"){
   Uptodate <- London[London$Week >= timemin & London$Week <= timemax , ]
   s<-spectrum(Uptodate$Counts, plot=FALSE)
   per <-  1/(s$freq*52)
-  plot(per, s$spec, type = "l", xlab = "Period (Years)", ylab = "Power Spectrum", xlim = c(0,5))
+  spec <- s$spec/max(s$spec)
+  plot(per, spec, type = linetype, xlab = "Period (Years)", ylab = "Power Spectrum", xlim = c(0,5), col = colour)
 }
+
+periodogram(London, col = "blue")
 
 ###############PART B###############
 
