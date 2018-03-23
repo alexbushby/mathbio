@@ -1,0 +1,361 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=0.1in]{geometry}
+\usepackage{amsmath}
+
+\input{4mbapreamble}
+\input{4mba4q}
+\newcommand{\BeautifulSolution}{{\color{blue}\begin{proof}{\color{magenta}\dots beautifully clear and concise text to be inserted here\dots}\end{proof}}}
+
+
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+\fancyhf{} 
+\lfoot{}
+\cfoot{{\small\bfseries Page \thepage\ of \pageref{LastPage}}}
+\rfoot{}
+\renewcommand\headrulewidth{0pt} 
+
+\begin{document}
+
+\begin{center}
+{\bf Mathematics 4MB3/6MB3 Mathematical Biology\\
+\smallskip
+2016 ASSIGNMENT \textcolor{blue}{4}}\\
+\medskip
+\underline{\emph{Group Name}}: \texttt{{\color{blue}The Four Humours}}\\
+\medskip
+\underline{\emph{Group Members}}: {\color{blue}Claudia Tugulun, Roger Zhang, Alexei Kuzmin, Alexandra Bushby}
+\end{center}
+
+\bigskip
+\noindent
+
+
+\bigskip
+
+\section{Time Series analysis of Recurrent Epidemics}
+
+\begin{enumerate}[(a)]
+
+\item 
+
+
+
+\begin{enumerate}[(i)]
+
+\item 
+
+
+<<>>=
+londona <- read.csv("meas_uk__lon_1944-94_wk.csv")
+liverpoola <- read.csv("meas_uk__lpl_1944-94_wk.csv")
+
+londonb <- londona[-c(1,2,3,4,5,6,7,8,9),] ##cleaning out not needed data
+liverpoolb <- liverpoola[-c(1,2,3,4,5,6,7,8,9),] ##cleaning out not needed data
+
+read.ymdc <- function(dat){
+  year <- dat[seq(1,length(dat),4)]
+  month <-dat[seq(2,length(dat),4)]
+  day <-dat[seq(3,length(dat),4)]
+  date<-as.Date(paste(year, month, day, sep = "."), format = "%Y.%m.%d")
+  count <-dat[seq(4,length(dat),4)]
+  count <- as.numeric(as.character(count))
+  week <- as.numeric((date - date[1])/7)
+  l <- list(date, count, week)
+  L <- data.frame(l)
+  names(L) <-c("Date", "Counts", "Week")
+  return(L)
+}
+
+London <- read.ymdc(londonb)
+Liverpool <-read.ymdc(liverpoolb)
+@
+
+\item 
+
+<<>>=
+par(mfrow = c(2,1))
+m.average <- function(dat,n){filter(dat[,2],rep(1/(2*n+1),n), sides=2)}
+
+time.plot<-function(dat,add=FALSE, n=20, linetype = "l", colour = "red", 
+                    maint){
+  if(add == TRUE){
+    X<-plot(dat$Week, dat$Counts, type= linetype, xlab = "Time (Weeks)", 
+            ylab = "Cases of Measles", main = maint)
+    lin <- lines(m.average(dat,n), col = colour)
+  }
+  if(add == FALSE){
+    X<-plot(dat$Week, dat$Counts, type = linetype, xlab = "Time (Weeks)",
+            ylab = "Cases of Measles", main = maint)
+  }
+}
+
+time.plot(London, add = TRUE, n = 10, col = "red", maint = "London")
+time.plot(Liverpool, add=TRUE, n=10, col = "red", maint = "Liverpool")
+@
+
+
+\item 
+<<>>=
+periodogram<-function(dat, timemin = 0, timemax = 2660, linetype = "l", 
+                      colour = "black", maint){
+  Uptodate <- dat[dat$Week >= timemin & dat$Week <= timemax , ]
+  s<-spectrum(Uptodate$Counts, plot=FALSE)
+  per <-  1/(s$freq*52)
+  spec <- s$spec/max(s$spec)
+  plot(per, spec, type = linetype, xlab = "Period (Years)", 
+       ylab = "Power Spectrum", xlim = c(0,5), col = colour, main = maint)
+}
+@
+
+\end{enumerate}
+
+\item
+
+<<>>=
+par(mfrow = c(4,2))
+
+periodogram(London, timemax = 400, maint = "London (1944 - 1951)")
+periodogram(Liverpool, timemax = 400, maint = "Liverpool (1944-1951)")
+periodogram(London, timemin = 400, timemax = 1250, 
+            maint = "London (1951-1967)")
+periodogram(Liverpool, timemin = 400, timemax = 1250, 
+            maint = "Liverpool (1951-1967)") 
+periodogram(London, timemin = 1250, timemax = 2400, 
+            maint = "London (1967 - 1990)")
+periodogram(Liverpool, timemin = 1250, timemax = 2400, 
+            maint = "Liverpool (1967 - 1990)") 
+periodogram(London, timemin = 2400, maint = "London (1990-1994)")
+periodogram(Liverpool, timemin = 2400, maint = "Liverpool (1990-1994)")
+@
+
+The above periodograms were chosen because that's when the data appeared to change on the timeplot. London's periodogram and Liverpool's periodogram are very different. London seems to almost always have a period of 1 year, as well as an additional period, such as 2 or 2.5 years. Liverpool has a much more interesting and vast plot, but also shows some similarities to London's periodogram. For example, Liverpool and London both have high power at 1 year from 1944-1951, high power at 2 years from 1951-1967 high power at 2.5 years from 1967-1990 and then high power back at 1 year from 1990-1994. What is interesting about the periodogram is Liverpool from 1990-1994. It seems as though there is a lot of power at certain intervals between 0 and 1 year. It would be very useful to use mathematical modelling to determine the reason for this change in periods and, in addition, to understand why the period being 1 year almost always has a lot of power.
+
+\end{enumerate}
+
+\section{Stochastic Epidemic Simulations}
+
+\begin{enumerate}[(a)]
+
+\item
+
+<<>>=
+SI.gillespie <- function(beta, N, I0, tmax){
+  t0 <- 0
+  times =(t0:tmax)
+  x <-c(S=N-I0, I=I0, t=t0)
+  
+  res <- matrix(nrow=length(t0:tmax),ncol=length(x),
+                dimnames = list(times,names(x))) #matrix to store values
+  
+  for (i in 1:(tmax+1)){
+    res[i,] <- x
+    rate <- with(as.list(x), beta*S*I) ## calculate current rate
+    if(rate<=0) break #rate != 0; t_next would return NaN
+    t_next <- rexp(1,rate)  #time to next event
+    t0 <- t0 + t_next # update time
+    x <- x+c(-1*rate*t_next, 1*rate*t_next, t0) #updates x <- c(S, I, t)
+    if(x[1]<0) #if S is for some reason negative, 
+      #change it to its previous positive
+      x <- res[i,]
+  }
+  cbind(res[,3],res[,2]) #returns cbind(t, I)
+}
+@
+
+
+\item 
+
+<<>>=
+par(mfrow = c(2,2))
+
+## N=32
+plot(0,0,xlim=c(0,10),ylim=c(0,32),
+     type="n",xlab="Time (t)",ylab="Prevalence (I)",main = "N = 32", las=1)
+for(i in 1:30){
+  G.SI <- SI.gillespie(beta=1, N=32, I0=1, tmax=80)
+  lines(G.SI, col=i)
+}
+N <- 32
+beta <- 1
+I0 <- 1
+It <- I0*exp(N*beta*G.SI[,1])/(1+(I0/N)*(exp(N*beta*G.SI[,1])-1))
+lines(G.SI[,1],It,lwd=3)
+
+## N=100
+plot(0,0,xlim=c(0,10),ylim=c(0,100),
+     type="n",xlab="Time (t)",ylab="Prevalence (I)",las=1, main = "N = 100")
+for(i in 1:30){
+  G.SI <- SI.gillespie(beta=1, N=100, I0=1, tmax=300)
+  lines(G.SI, col=i)
+}
+N <- 100
+G.SI <- SI.gillespie(beta=1, N=100, I0=1, tmax=80)
+It <- I0*exp(N*beta*G.SI[,1])/(1+(I0/N)*(exp(N*beta*G.SI[,1])-1))
+lines(G.SI[,1],It,lwd=3)
+
+## N=1000
+plot(0,0,xlim=c(0,10),ylim=c(0,1000),
+     type="n",xlab="Time (t)",ylab="Prevalence (I)",las=1, main = "N = 1000")
+for(i in 1:30){
+  G.SI <- SI.gillespie(beta=1, N=1000, I0=1, tmax=1000)
+  lines(G.SI, col=i)
+}
+N <- 1000
+It <- I0*exp(N*beta*G.SI[,1])/(1+(I0/N)*(exp(N*beta*G.SI[,1])-1))
+lines(G.SI[,1],It,lwd=3)
+
+## N=10,000
+plot(0,0,xlim=c(0,10),ylim=c(0,10000),
+     type="n",xlab="Time (t)",ylab="Prevalence (I)",las=1, main = "N = 10,000")
+for(i in 1:30){
+  G.SI <- SI.gillespie(beta=1, N=10000, I0=1, tmax=10000)
+  lines(G.SI, col=i)
+}
+N <- 10000
+It <- I0*exp(N*beta*G.SI[,1])/(1+(I0/N)*(exp(N*beta*G.SI[,1])-1))
+lines(G.SI[,1],It,lwd=3)
+
+
+@
+
+
+\end{enumerate}
+
+\section{$\R_0$ for smallpox}
+
+\begin{enumerate}[(a)]
+
+\item
+
+$I_i$ corresponds to the infectious state an individual is in. $\mu$ is the per capita rate of births and deaths and $\beta_i$ is the transmission rate, which depends on which stage of the infection an individual is in. When $i=R$, we have rare infectiousness. When $i=E$, we have extreme infectiousness. When $i=M$, we have moderate infectiousness. When $i=L$, we have low infectiousness. 
+\begin{subequations}
+\begin{align}
+\frac{dS}{dt} &= \mu - S \mu - S (\beta_R I _R + \beta_E I _E + \beta_M I_M + \beta_L I_L) \\
+\noalign{\vspace{8pt}}
+\frac{dE}{dt} &= S (\beta_R I _R + \beta_E I _E + \beta_M I_M + \beta_L I_L) - \mu E - \frac{1}{12} E \\
+\noalign{\vspace{8pt}}
+\frac{dI_R}{dt} &= \frac{1}{12} E - \frac{1}{3} I_R - \mu I_R \\
+\noalign{\vspace{8pt}}
+\frac{dI_E}{dt} &= \frac{1}{3} I_R - \frac{1}{4} I_E - \mu I_E \\
+\noalign{\vspace{8pt}}
+\frac{dI_M}{dt} &= \frac{1}{4} I_E - \frac{1}{5} I_M - \mu I_M \\
+\noalign{\vspace{8pt}}
+\frac{dI_L}{dt} &= \frac{1}{5} I_M - \frac{1}{11} I_L - \mu I_L \\
+\noalign{\vspace{8pt}}
+\frac{dR}{dt} &= \frac{1}{11} I_L - \mu R
+\end{align}
+\end{subequations}
+
+  \item
+
+We have four stages of infections. 
+Since each stage of infection results in secondary cases, each of the four stages must be considered individually and each corresponding $\R_0$ computed. The $\R_0$ of each stage is determined by the product of the corresponding transmission rate and average length of time an individual spends in that stage, which takes into account the probability of reaching and completing that particular stage of infection. The total $\R_0$ of the infectious disease is thus the sum of the reproductive numbers associated with each infected stage. The biological derivation of $\R_0$ is shown below.
+
+\begin{multline}\label{eq:pareto mle2}
+\R_0 = \beta_R \cdot \frac{\frac{1}{12}}{\frac{1}{12}+\mu}\cdot\frac{1}{\frac{1}{3}+\mu}+\beta_E \cdot \frac{\frac{1}{12}}{\frac{1}{12}+\mu}\cdot\frac{\frac{1}{3}}{\frac{1}{3}+\mu}\cdot\frac{1}{\frac{1}{4}+\mu}+\beta_M \cdot \frac{\frac{1}{12}}{\frac{1}{12}+\mu}\cdot\frac{\frac{1}{3}}{\frac{1}{3}+\mu}\cdot\frac{\frac{1}{4}}{\frac{1}{4}+\mu}\cdot\frac{1}{\frac{1}{5}+\mu} \\ +\beta_L \cdot \frac{\frac{1}{12}}{\frac{1}{12}+\mu}\cdot\frac{\frac{1}{3}}{\frac{1}{3}+\mu}\cdot\frac{\frac{1}{4}}{\frac{1}{4}+\mu}\cdot\frac{\frac{1}{5}}{\frac{1}{5}+\mu}\cdot\frac{1}{\frac{1}{11}+\mu}
+\end{multline}
+\begin{multline}\label{R01}
+\R_0 =  \frac{3\beta_R}{(12 \mu + 1)(3 \mu + 1)} + \frac{4\beta_E}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1)} +\frac{5\beta_M}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)} \\
++ \frac{11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)(11\mu+1)}
+\end{multline}
+
+
+\item 
+$ \mathcal{F}$ is the inflow of new infecteds and $F$ is the linearization at the DFE of $\mathcal{F}$.  $ \mathcal{V}$ is the outflow from infected individuals minus the inflow of non-new infecteds and $V$ is the linearization at the DFE of $\mathcal{V}$. 
+\begin{align*}
+\frac{d}{dt} \begin{pmatrix}
+E \\
+I_R \\
+I_E \\
+I_M \\
+I_L
+\end{pmatrix} &= \begin{pmatrix}
+S (\beta_R I _R + \beta_E I _E + \beta_M I_M + \beta_L I_L) - \mu E - \frac{1}{12} E \\
+\frac{1}{12} E - \frac{1}{3} I_R - \mu I_R\\
+\frac{1}{3} I_R - \frac{1}{4} I_E - \mu I_E \\
+\frac{1}{4} I_E - \frac{1}{5} I_M - \mu I_M \\
+\frac{1}{5} I_M - \frac{1}{11} I_L - \mu I_L
+\end{pmatrix} \\
+\mathcal{F} &= \begin{pmatrix}
+S (\beta_R I _R + \beta_E I _E + \beta_M I_M + \beta_L I_L) \\
+0\\
+0 \\
+0 \\
+0
+\end{pmatrix} \\
+F &= \begin{pmatrix}
+0 & \beta_R & \beta_E & \beta_M & \beta_L \\
+0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0
+\end{pmatrix}  \\
+\mathcal{V} &= \begin{pmatrix}
+\mu E + \frac{1}{12} E \\
+- \frac{1}{12} E + \frac{1}{3} I_R + \mu I_R\\
+- \frac{1}{3} I_R + \frac{1}{4} I_E + \mu I_E \\
+- \frac{1}{4} I_E + \frac{1}{5} I_M + \mu I_M \\
+- \frac{1}{5} I_M + \frac{1}{11} I_L + \mu I_L
+\end{pmatrix}  \\
+V &= \begin{pmatrix}
+\mu + \frac{1}{12} & 0 & 0 & 0 & 0\\
+- \frac{1}{12} & \frac{1}{3} + \mu & 0 & 0 &0 \\
+0 & - \frac{1}{3} & \frac{1}{4} + \mu & 0 & 0 \\
+0 & 0 & - \frac{1}{4} & \frac{1}{5} + \mu & 0 \\
+0 & 0 & 0 & - \frac{1}{5} & \frac{1}{11} + \mu
+\end{pmatrix} \\
+\end{align*}
+
+According to WolframAlpha, $V^{-1}$ is:
+\[
+\begin{pmatrix}
+\frac{12}{12\mu+1} & 0 & 0 & 0 & 0 \\
+\frac{3}{(12\mu+1)(3\mu+1)} & \frac{3}{3\mu + 1} & 0 & 0&0 \\
+\frac{4}{(12\mu+1)(3\mu+1)(4\mu+1)} & \frac{4}{(3\mu+1)(4\mu+1)} & \frac{4}{4 \mu + 1} & 0 & 0 \\
+\frac{5}{(12\mu+1)(3\mu+1)(4\mu+1)(5\mu+1)} & \frac{5}{(3\mu+1)(4\mu+1)(5\mu+1)} & \frac{5}{(4\mu+1)(5\mu+1)}& \frac{5}{5 \mu + 1}& 0 \\
+\frac{11}{(12\mu+1)(3\mu+1)(4\mu+1)(5\mu+1)(11\mu+1)}& \frac{11}{(3\mu+1)(4\mu+1)(5\mu+1)(11\mu+1)}& \frac{11}{(4\mu+1)(5\mu+1)(11\mu+1)} & \frac{11}{(5\mu+1)(11\mu+1)} & \frac{11}{11+\mu} 
+\end{pmatrix}.
+\]
+
+The eigenvalues of $FV^{-1}$ can be found to be 0 or the following:
+\begin{align*}
+\lambda &= \frac{\beta_R(660 \mu^3 + 357 \mu^2 + 60 \mu + 3)+4\beta_E(55 \mu^2 + 16 \mu + 1)+5\beta_M(11+\mu) + 11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)(11\mu+1)} \\
+\lambda &= \frac{3\beta_R(4 \mu + 1) (5 \mu + 1)   (11 \mu + 1)+ 4\beta_E (5 \mu + 1)(11 \mu + 1) + 5\beta_M(11+\mu) + 11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)(11\mu+1)}
+\end{align*}
+
+Because $\lambda = \rho(FV^{-1})$, $R_0$ is the following:
+\begin{multline}\label{R02}
+\R_0 = \frac{3\beta_R}{(12 \mu + 1)(3 \mu + 1)} + \frac{4\beta_E}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1)} + \frac{5\beta_M}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)} \\ + \frac{11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)(11\mu+1)}
+\end{multline}
+
+We can see that \eqref{R01} and \eqref{R02} agree with each other.
+
+\item 
+According to the CDC, the altered virus is characterized by the early rash stage lasting twice as long compared with the naturally circulating virus. That is, for the altered virus, the early rash stage is expected to last 8 days instead of 4 days. In practice, the value of $\R_0$ for the altered smallpox virus, $\R_0^A$, can be obtained by changing values of 4 to 8 in \eqref{R02}:
+
+\begin{multline}\label{eq:R0_alt}
+\R_0^A = \frac{3\beta_R}{(12 \mu + 1)(3 \mu + 1)} + \frac{8\beta_E}{(12 \mu + 1)(3 \mu + 1)  (8 \mu + 1)} + \frac{5\beta_M}{(12 \mu + 1)(3 \mu + 1)  (8 \mu + 1) (5 \mu + 1)} \\ + \frac{11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (8 \mu + 1) (5 \mu + 1)(11\mu+1)}
+\end{multline}
+Intuitively, we expect that $\R_0^A > \R_0$. As in part (b), $\R_0^A$ is composed of the sum of the reproductive numbers associated with each of the four infected stages. The reproductive number associated with the first stage (rare infectiousness) is unchanged for for the altered virus, i.e. $\R_0^A = \R_0$. Comparing equations \eqref{R02} and \eqref{eq:R0_alt}, we find the relationship between the reproductive number corresponding to the second stage (extreme infectiousness) for the altered and unaltered virus is $\R_0^A =2  \R_0 \frac{4 \mu + 1}{8 \mu + 1}$, where the multiplicative factor $\frac{4 \mu + 1}{8 \mu + 1}$ represents the probability of progressing through the second stage with the altered virus as a proportion of the probability of progressing through the second stage with the unaltered virus. For the final stages (moderate and low infectiousness), the relationship between the altered and unaltered reproductive numbers is simply given by $\R_0^A = \R_0  \frac{4 \mu + 1}{8 \mu + 1}$.
+Moreover, under the assumption that $\mu \approx 0$, the quantity $\frac{4 \mu + 1}{8 \mu + 1} = 1$. Thus the difference in $\R_0$ that can be expected for the newly engineered virus as compared to the original virus is $4\beta_E$.
+
+
+\item
+
+Provided with the natural history of smallpox and the prediction that upon successful alteration, the early rash stage of the the newly engineered smallpox virus will be twice as long, we were able to use well-established theory to estimate the basic reproduction number, $\R_0$ (the average number
+of secondary cases caused by a primary case at the beginning of the epidemic). The results of our analysis suggest that the increase in the reproductive number for the altered virus, relative to the $\R_0\approx 5$ of the original virus, will be four times the transmission rate associated with the early rash stage. 
+The final size of the epidemic based on the $\R_0$ of the unaltered virus corresponds to approximately 99$\%$ of the population contracting the virus. Since the reproductive number for the altered virus is estimated to be between 5 and $5 + 4\beta_E$, we expect the size of the epidemic to exceed 99$\%$. Efforts should be directed towards the development of a vaccine to protect against this newly altered smallpox virus in the event of a bioterrorist attack. 
+
+
+\end{enumerate}
+
+\bigskip
+\centerline{\bf--- END OF ASSIGNMENT ---}
+
+\bigskip
+Compile time for this document:
+\today\ @ \thistime
+
+\end{document}

@@ -1,0 +1,439 @@
+\documentclass[12pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\usepackage[margin=0.1in]{geometry}
+\usepackage{amsmath}
+
+\input{4mbapreamble}
+\input{4mba4q}
+\newcommand{\BeautifulSolution}{{\color{blue}\begin{proof}{\color{magenta}\dots beautifully clear and concise text to be inserted here\dots}\end{proof}}}
+
+
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+\fancyhf{} 
+\lfoot{}
+\cfoot{{\small\bfseries Page \thepage\ of \pageref{LastPage}}}
+\rfoot{}
+\renewcommand\headrulewidth{0pt}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\begin{center}
+{\bf Mathematics 4MB3/6MB3 Mathematical Biology\\
+\smallskip
+2016 ASSIGNMENT \textcolor{blue}{4}}\\
+\medskip
+\underline{\emph{Group Name}}: \texttt{{\color{blue}The Four Humours}}\\
+\medskip
+\underline{\emph{Group Members}}: {\color{blue}Claudia Tugulun, Roger Zhang, Alexei Kuzmin, Alexandra Bushby}
+\end{center}
+
+\bigskip
+\noindent
+
+
+\bigskip
+
+\section{Time Series analysis of Recurrent Epidemics}
+
+\begin{enumerate}[(a)]
+
+\item 
+
+
+
+\begin{enumerate}[(i)]
+
+\item 
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{londona} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"meas_uk__lon_1944-94_wk.csv"}\hlstd{)}
+\hlstd{liverpoola} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"meas_uk__lpl_1944-94_wk.csv"}\hlstd{)}
+
+\hlstd{londonb} \hlkwb{<-} \hlstd{londona[}\hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{6}\hlstd{,}\hlnum{7}\hlstd{,}\hlnum{8}\hlstd{,}\hlnum{9}\hlstd{),]} \hlcom{##cleaning out not needed data}
+\hlstd{liverpoolb} \hlkwb{<-} \hlstd{liverpoola[}\hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{4}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{6}\hlstd{,}\hlnum{7}\hlstd{,}\hlnum{8}\hlstd{,}\hlnum{9}\hlstd{),]} \hlcom{##cleaning out not needed data}
+
+\hlstd{read.ymdc} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dat}\hlstd{)\{}
+  \hlstd{year} \hlkwb{<-} \hlstd{dat[}\hlkwd{seq}\hlstd{(}\hlnum{1}\hlstd{,}\hlkwd{length}\hlstd{(dat),}\hlnum{4}\hlstd{)]}
+  \hlstd{month} \hlkwb{<-}\hlstd{dat[}\hlkwd{seq}\hlstd{(}\hlnum{2}\hlstd{,}\hlkwd{length}\hlstd{(dat),}\hlnum{4}\hlstd{)]}
+  \hlstd{day} \hlkwb{<-}\hlstd{dat[}\hlkwd{seq}\hlstd{(}\hlnum{3}\hlstd{,}\hlkwd{length}\hlstd{(dat),}\hlnum{4}\hlstd{)]}
+  \hlstd{date}\hlkwb{<-}\hlkwd{as.Date}\hlstd{(}\hlkwd{paste}\hlstd{(year, month, day,} \hlkwc{sep} \hlstd{=} \hlstr{"."}\hlstd{),} \hlkwc{format} \hlstd{=} \hlstr{"%Y.%m.%d"}\hlstd{)}
+  \hlstd{count} \hlkwb{<-}\hlstd{dat[}\hlkwd{seq}\hlstd{(}\hlnum{4}\hlstd{,}\hlkwd{length}\hlstd{(dat),}\hlnum{4}\hlstd{)]}
+  \hlstd{count} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{as.character}\hlstd{(count))}
+  \hlstd{week} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{((date} \hlopt{-} \hlstd{date[}\hlnum{1}\hlstd{])}\hlopt{/}\hlnum{7}\hlstd{)}
+  \hlstd{l} \hlkwb{<-} \hlkwd{list}\hlstd{(date, count, week)}
+  \hlstd{L} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(l)}
+  \hlkwd{names}\hlstd{(L)} \hlkwb{<-}\hlkwd{c}\hlstd{(}\hlstr{"Date"}\hlstd{,} \hlstr{"Counts"}\hlstd{,} \hlstr{"Week"}\hlstd{)}
+  \hlkwd{return}\hlstd{(L)}
+\hlstd{\}}
+
+\hlstd{London} \hlkwb{<-} \hlkwd{read.ymdc}\hlstd{(londonb)}
+\hlstd{Liverpool} \hlkwb{<-}\hlkwd{read.ymdc}\hlstd{(liverpoolb)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\item 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{1}\hlstd{))}
+\hlstd{m.average} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dat}\hlstd{,}\hlkwc{n}\hlstd{)\{}\hlkwd{filter}\hlstd{(dat[,}\hlnum{2}\hlstd{],}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{n}\hlopt{+}\hlnum{1}\hlstd{),n),} \hlkwc{sides}\hlstd{=}\hlnum{2}\hlstd{)\}}
+
+\hlstd{time.plot}\hlkwb{<-}\hlkwa{function}\hlstd{(}\hlkwc{dat}\hlstd{,}\hlkwc{add}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{n}\hlstd{=}\hlnum{20}\hlstd{,} \hlkwc{linetype} \hlstd{=} \hlstr{"l"}\hlstd{,} \hlkwc{colour} \hlstd{=} \hlstr{"red"}\hlstd{,}
+                    \hlkwc{maint}\hlstd{)\{}
+  \hlkwa{if}\hlstd{(add} \hlopt{==} \hlnum{TRUE}\hlstd{)\{}
+    \hlstd{X}\hlkwb{<-}\hlkwd{plot}\hlstd{(dat}\hlopt{$}\hlstd{Week, dat}\hlopt{$}\hlstd{Counts,} \hlkwc{type}\hlstd{= linetype,} \hlkwc{xlab} \hlstd{=} \hlstr{"Time (Weeks)"}\hlstd{,}
+            \hlkwc{ylab} \hlstd{=} \hlstr{"Cases of Measles"}\hlstd{,} \hlkwc{main} \hlstd{= maint)}
+    \hlstd{lin} \hlkwb{<-} \hlkwd{lines}\hlstd{(}\hlkwd{m.average}\hlstd{(dat,n),} \hlkwc{col} \hlstd{= colour)}
+  \hlstd{\}}
+  \hlkwa{if}\hlstd{(add} \hlopt{==} \hlnum{FALSE}\hlstd{)\{}
+    \hlstd{X}\hlkwb{<-}\hlkwd{plot}\hlstd{(dat}\hlopt{$}\hlstd{Week, dat}\hlopt{$}\hlstd{Counts,} \hlkwc{type} \hlstd{= linetype,} \hlkwc{xlab} \hlstd{=} \hlstr{"Time (Weeks)"}\hlstd{,}
+            \hlkwc{ylab} \hlstd{=} \hlstr{"Cases of Measles"}\hlstd{,} \hlkwc{main} \hlstd{= maint)}
+  \hlstd{\}}
+\hlstd{\}}
+
+\hlkwd{time.plot}\hlstd{(London,} \hlkwc{add} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{n} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{maint} \hlstd{=} \hlstr{"London"}\hlstd{)}
+\hlkwd{time.plot}\hlstd{(Liverpool,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{n}\hlstd{=}\hlnum{10}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{maint} \hlstd{=} \hlstr{"Liverpool"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-2-1} 
+
+\end{knitrout}
+
+
+\item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{periodogram}\hlkwb{<-}\hlkwa{function}\hlstd{(}\hlkwc{dat}\hlstd{,} \hlkwc{timemin} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{timemax} \hlstd{=} \hlnum{2660}\hlstd{,} \hlkwc{linetype} \hlstd{=} \hlstr{"l"}\hlstd{,}
+                      \hlkwc{colour} \hlstd{=} \hlstr{"black"}\hlstd{,} \hlkwc{maint}\hlstd{)\{}
+  \hlstd{Uptodate} \hlkwb{<-} \hlstd{dat[dat}\hlopt{$}\hlstd{Week} \hlopt{>=} \hlstd{timemin} \hlopt{&} \hlstd{dat}\hlopt{$}\hlstd{Week} \hlopt{<=} \hlstd{timemax , ]}
+  \hlstd{s}\hlkwb{<-}\hlkwd{spectrum}\hlstd{(Uptodate}\hlopt{$}\hlstd{Counts,} \hlkwc{plot}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+  \hlstd{per} \hlkwb{<-}  \hlnum{1}\hlopt{/}\hlstd{(s}\hlopt{$}\hlstd{freq}\hlopt{*}\hlnum{52}\hlstd{)}
+  \hlstd{spec} \hlkwb{<-} \hlstd{s}\hlopt{$}\hlstd{spec}\hlopt{/}\hlkwd{max}\hlstd{(s}\hlopt{$}\hlstd{spec)}
+  \hlkwd{plot}\hlstd{(per, spec,} \hlkwc{type} \hlstd{= linetype,} \hlkwc{xlab} \hlstd{=} \hlstr{"Period (Years)"}\hlstd{,}
+       \hlkwc{ylab} \hlstd{=} \hlstr{"Power Spectrum"}\hlstd{,} \hlkwc{xlim} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{5}\hlstd{),} \hlkwc{col} \hlstd{= colour,} \hlkwc{main} \hlstd{= maint)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{enumerate}
+
+\item
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,}\hlnum{2}\hlstd{))}
+
+\hlkwd{periodogram}\hlstd{(London,} \hlkwc{timemax} \hlstd{=} \hlnum{400}\hlstd{,} \hlkwc{maint} \hlstd{=} \hlstr{"London (1944 - 1951)"}\hlstd{)}
+\hlkwd{periodogram}\hlstd{(Liverpool,} \hlkwc{timemax} \hlstd{=} \hlnum{400}\hlstd{,} \hlkwc{maint} \hlstd{=} \hlstr{"Liverpool (1944-1951)"}\hlstd{)}
+\hlkwd{periodogram}\hlstd{(London,} \hlkwc{timemin} \hlstd{=} \hlnum{400}\hlstd{,} \hlkwc{timemax} \hlstd{=} \hlnum{1250}\hlstd{,}
+            \hlkwc{maint} \hlstd{=} \hlstr{"London (1951-1967)"}\hlstd{)}
+\hlkwd{periodogram}\hlstd{(Liverpool,} \hlkwc{timemin} \hlstd{=} \hlnum{400}\hlstd{,} \hlkwc{timemax} \hlstd{=} \hlnum{1250}\hlstd{,}
+            \hlkwc{maint} \hlstd{=} \hlstr{"Liverpool (1951-1967)"}\hlstd{)}
+\hlkwd{periodogram}\hlstd{(London,} \hlkwc{timemin} \hlstd{=} \hlnum{1250}\hlstd{,} \hlkwc{timemax} \hlstd{=} \hlnum{2400}\hlstd{,}
+            \hlkwc{maint} \hlstd{=} \hlstr{"London (1967 - 1990)"}\hlstd{)}
+\hlkwd{periodogram}\hlstd{(Liverpool,} \hlkwc{timemin} \hlstd{=} \hlnum{1250}\hlstd{,} \hlkwc{timemax} \hlstd{=} \hlnum{2400}\hlstd{,}
+            \hlkwc{maint} \hlstd{=} \hlstr{"Liverpool (1967 - 1990)"}\hlstd{)}
+\hlkwd{periodogram}\hlstd{(London,} \hlkwc{timemin} \hlstd{=} \hlnum{2400}\hlstd{,} \hlkwc{maint} \hlstd{=} \hlstr{"London (1990-1994)"}\hlstd{)}
+\hlkwd{periodogram}\hlstd{(Liverpool,} \hlkwc{timemin} \hlstd{=} \hlnum{2400}\hlstd{,} \hlkwc{maint} \hlstd{=} \hlstr{"Liverpool (1990-1994)"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-4-1} 
+
+\end{knitrout}
+
+The above periodograms were chosen because that's when the data appeared to change on the timeplot. London's periodogram and Liverpool's periodogram are very different. London seems to almost always have a period of 1 year, as well as an additional period, such as 2 or 2.5 years. Liverpool has a much more interesting and vast plot, but also shows some similarities to London's periodogram. For example, Liverpool and London both have high power at 1 year from 1944-1951, high power at 2 years from 1951-1967 high power at 2.5 years from 1967-1990 and then high power back at 1 year from 1990-1994. What is interesting about the periodogram is Liverpool from 1990-1994. It seems as though there is a lot of power at certain intervals between 0 and 1 year. It would be very useful to use mathematical modelling to determine the reason for this change in periods and, in addition, to understand why the period being 1 year almost always has a lot of power.
+
+\end{enumerate}
+
+\section{Stochastic Epidemic Simulations}
+
+\begin{enumerate}[(a)]
+
+\item
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{SI.gillespie} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{beta}\hlstd{,} \hlkwc{N}\hlstd{,} \hlkwc{I0}\hlstd{,} \hlkwc{tmax}\hlstd{)\{}
+  \hlstd{t0} \hlkwb{<-} \hlnum{0}
+  \hlstd{times} \hlkwb{=}\hlstd{(t0}\hlopt{:}\hlstd{tmax)}
+  \hlstd{x} \hlkwb{<-}\hlkwd{c}\hlstd{(}\hlkwc{S}\hlstd{=N}\hlopt{-}\hlstd{I0,} \hlkwc{I}\hlstd{=I0,} \hlkwc{t}\hlstd{=t0)}
+
+  \hlstd{res} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwc{nrow}\hlstd{=}\hlkwd{length}\hlstd{(t0}\hlopt{:}\hlstd{tmax),}\hlkwc{ncol}\hlstd{=}\hlkwd{length}\hlstd{(x),}
+                \hlkwc{dimnames} \hlstd{=} \hlkwd{list}\hlstd{(times,}\hlkwd{names}\hlstd{(x)))} \hlcom{#matrix to store values}
+
+  \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{(tmax}\hlopt{+}\hlnum{1}\hlstd{))\{}
+    \hlstd{res[i,]} \hlkwb{<-} \hlstd{x}
+    \hlstd{rate} \hlkwb{<-} \hlkwd{with}\hlstd{(}\hlkwd{as.list}\hlstd{(x), beta}\hlopt{*}\hlstd{S}\hlopt{*}\hlstd{I)} \hlcom{## calculate current rate}
+    \hlkwa{if}\hlstd{(rate}\hlopt{<=}\hlnum{0}\hlstd{)} \hlkwa{break} \hlcom{#rate != 0; t_next would return NaN}
+    \hlstd{t_next} \hlkwb{<-} \hlkwd{rexp}\hlstd{(}\hlnum{1}\hlstd{,rate)}  \hlcom{#time to next event}
+    \hlstd{t0} \hlkwb{<-} \hlstd{t0} \hlopt{+} \hlstd{t_next} \hlcom{# update time}
+    \hlstd{x} \hlkwb{<-} \hlstd{x}\hlopt{+}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlopt{*}\hlstd{rate}\hlopt{*}\hlstd{t_next,} \hlnum{1}\hlopt{*}\hlstd{rate}\hlopt{*}\hlstd{t_next, t0)} \hlcom{#updates x <- c(S, I, t)}
+    \hlkwa{if}\hlstd{(x[}\hlnum{1}\hlstd{]}\hlopt{<}\hlnum{0}\hlstd{)} \hlcom{#if S is for some reason negative, }
+      \hlcom{#change it to its previous positive}
+      \hlstd{x} \hlkwb{<-} \hlstd{res[i,]}
+  \hlstd{\}}
+  \hlkwd{cbind}\hlstd{(res[,}\hlnum{3}\hlstd{],res[,}\hlnum{2}\hlstd{])} \hlcom{#returns cbind(t, I)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\item 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
+
+\hlcom{## N=32}
+\hlkwd{plot}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{10}\hlstd{),}\hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{32}\hlstd{),}
+     \hlkwc{type}\hlstd{=}\hlstr{"n"}\hlstd{,}\hlkwc{xlab}\hlstd{=}\hlstr{"Time (t)"}\hlstd{,}\hlkwc{ylab}\hlstd{=}\hlstr{"Prevalence (I)"}\hlstd{,}\hlkwc{main} \hlstd{=} \hlstr{"N = 32"}\hlstd{,} \hlkwc{las}\hlstd{=}\hlnum{1}\hlstd{)}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{30}\hlstd{)\{}
+  \hlstd{G.SI} \hlkwb{<-} \hlkwd{SI.gillespie}\hlstd{(}\hlkwc{beta}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{N}\hlstd{=}\hlnum{32}\hlstd{,} \hlkwc{I0}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{tmax}\hlstd{=}\hlnum{80}\hlstd{)}
+  \hlkwd{lines}\hlstd{(G.SI,} \hlkwc{col}\hlstd{=i)}
+\hlstd{\}}
+\hlstd{N} \hlkwb{<-} \hlnum{32}
+\hlstd{beta} \hlkwb{<-} \hlnum{1}
+\hlstd{I0} \hlkwb{<-} \hlnum{1}
+\hlstd{It} \hlkwb{<-} \hlstd{I0}\hlopt{*}\hlkwd{exp}\hlstd{(N}\hlopt{*}\hlstd{beta}\hlopt{*}\hlstd{G.SI[,}\hlnum{1}\hlstd{])}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{(I0}\hlopt{/}\hlstd{N)}\hlopt{*}\hlstd{(}\hlkwd{exp}\hlstd{(N}\hlopt{*}\hlstd{beta}\hlopt{*}\hlstd{G.SI[,}\hlnum{1}\hlstd{])}\hlopt{-}\hlnum{1}\hlstd{))}
+\hlkwd{lines}\hlstd{(G.SI[,}\hlnum{1}\hlstd{],It,}\hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+
+\hlcom{## N=100}
+\hlkwd{plot}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{10}\hlstd{),}\hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{100}\hlstd{),}
+     \hlkwc{type}\hlstd{=}\hlstr{"n"}\hlstd{,}\hlkwc{xlab}\hlstd{=}\hlstr{"Time (t)"}\hlstd{,}\hlkwc{ylab}\hlstd{=}\hlstr{"Prevalence (I)"}\hlstd{,}\hlkwc{las}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"N = 100"}\hlstd{)}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{30}\hlstd{)\{}
+  \hlstd{G.SI} \hlkwb{<-} \hlkwd{SI.gillespie}\hlstd{(}\hlkwc{beta}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{N}\hlstd{=}\hlnum{100}\hlstd{,} \hlkwc{I0}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{tmax}\hlstd{=}\hlnum{300}\hlstd{)}
+  \hlkwd{lines}\hlstd{(G.SI,} \hlkwc{col}\hlstd{=i)}
+\hlstd{\}}
+\hlstd{N} \hlkwb{<-} \hlnum{100}
+\hlstd{G.SI} \hlkwb{<-} \hlkwd{SI.gillespie}\hlstd{(}\hlkwc{beta}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{N}\hlstd{=}\hlnum{100}\hlstd{,} \hlkwc{I0}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{tmax}\hlstd{=}\hlnum{80}\hlstd{)}
+\hlstd{It} \hlkwb{<-} \hlstd{I0}\hlopt{*}\hlkwd{exp}\hlstd{(N}\hlopt{*}\hlstd{beta}\hlopt{*}\hlstd{G.SI[,}\hlnum{1}\hlstd{])}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{(I0}\hlopt{/}\hlstd{N)}\hlopt{*}\hlstd{(}\hlkwd{exp}\hlstd{(N}\hlopt{*}\hlstd{beta}\hlopt{*}\hlstd{G.SI[,}\hlnum{1}\hlstd{])}\hlopt{-}\hlnum{1}\hlstd{))}
+\hlkwd{lines}\hlstd{(G.SI[,}\hlnum{1}\hlstd{],It,}\hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+
+\hlcom{## N=1000}
+\hlkwd{plot}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{10}\hlstd{),}\hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1000}\hlstd{),}
+     \hlkwc{type}\hlstd{=}\hlstr{"n"}\hlstd{,}\hlkwc{xlab}\hlstd{=}\hlstr{"Time (t)"}\hlstd{,}\hlkwc{ylab}\hlstd{=}\hlstr{"Prevalence (I)"}\hlstd{,}\hlkwc{las}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"N = 1000"}\hlstd{)}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{30}\hlstd{)\{}
+  \hlstd{G.SI} \hlkwb{<-} \hlkwd{SI.gillespie}\hlstd{(}\hlkwc{beta}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{N}\hlstd{=}\hlnum{1000}\hlstd{,} \hlkwc{I0}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{tmax}\hlstd{=}\hlnum{1000}\hlstd{)}
+  \hlkwd{lines}\hlstd{(G.SI,} \hlkwc{col}\hlstd{=i)}
+\hlstd{\}}
+\hlstd{N} \hlkwb{<-} \hlnum{1000}
+\hlstd{It} \hlkwb{<-} \hlstd{I0}\hlopt{*}\hlkwd{exp}\hlstd{(N}\hlopt{*}\hlstd{beta}\hlopt{*}\hlstd{G.SI[,}\hlnum{1}\hlstd{])}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{(I0}\hlopt{/}\hlstd{N)}\hlopt{*}\hlstd{(}\hlkwd{exp}\hlstd{(N}\hlopt{*}\hlstd{beta}\hlopt{*}\hlstd{G.SI[,}\hlnum{1}\hlstd{])}\hlopt{-}\hlnum{1}\hlstd{))}
+\hlkwd{lines}\hlstd{(G.SI[,}\hlnum{1}\hlstd{],It,}\hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+
+\hlcom{## N=10,000}
+\hlkwd{plot}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlkwc{xlim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{10}\hlstd{),}\hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{10000}\hlstd{),}
+     \hlkwc{type}\hlstd{=}\hlstr{"n"}\hlstd{,}\hlkwc{xlab}\hlstd{=}\hlstr{"Time (t)"}\hlstd{,}\hlkwc{ylab}\hlstd{=}\hlstr{"Prevalence (I)"}\hlstd{,}\hlkwc{las}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"N = 10,000"}\hlstd{)}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{30}\hlstd{)\{}
+  \hlstd{G.SI} \hlkwb{<-} \hlkwd{SI.gillespie}\hlstd{(}\hlkwc{beta}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{N}\hlstd{=}\hlnum{10000}\hlstd{,} \hlkwc{I0}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{tmax}\hlstd{=}\hlnum{10000}\hlstd{)}
+  \hlkwd{lines}\hlstd{(G.SI,} \hlkwc{col}\hlstd{=i)}
+\hlstd{\}}
+\hlstd{N} \hlkwb{<-} \hlnum{10000}
+\hlstd{It} \hlkwb{<-} \hlstd{I0}\hlopt{*}\hlkwd{exp}\hlstd{(N}\hlopt{*}\hlstd{beta}\hlopt{*}\hlstd{G.SI[,}\hlnum{1}\hlstd{])}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{(I0}\hlopt{/}\hlstd{N)}\hlopt{*}\hlstd{(}\hlkwd{exp}\hlstd{(N}\hlopt{*}\hlstd{beta}\hlopt{*}\hlstd{G.SI[,}\hlnum{1}\hlstd{])}\hlopt{-}\hlnum{1}\hlstd{))}
+\hlkwd{lines}\hlstd{(G.SI[,}\hlnum{1}\hlstd{],It,}\hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-6-1} 
+
+\end{knitrout}
+
+
+\end{enumerate}
+
+\section{$\R_0$ for smallpox}
+
+\begin{enumerate}[(a)]
+
+\item
+
+$I_i$ corresponds to the infectious state an individual is in. $\mu$ is the per capita rate of births and deaths and $\beta_i$ is the transmission rate, which depends on which stage of the infection an individual is in. When $i=R$, we have rare infectiousness. When $i=E$, we have extreme infectiousness. When $i=M$, we have moderate infectiousness. When $i=L$, we have low infectiousness. 
+\begin{subequations}
+\begin{align}
+\frac{dS}{dt} &= \mu - S \mu - S (\beta_R I _R + \beta_E I _E + \beta_M I_M + \beta_L I_L) \\
+\noalign{\vspace{8pt}}
+\frac{dE}{dt} &= S (\beta_R I _R + \beta_E I _E + \beta_M I_M + \beta_L I_L) - \mu E - \frac{1}{12} E \\
+\noalign{\vspace{8pt}}
+\frac{dI_R}{dt} &= \frac{1}{12} E - \frac{1}{3} I_R - \mu I_R \\
+\noalign{\vspace{8pt}}
+\frac{dI_E}{dt} &= \frac{1}{3} I_R - \frac{1}{4} I_E - \mu I_E \\
+\noalign{\vspace{8pt}}
+\frac{dI_M}{dt} &= \frac{1}{4} I_E - \frac{1}{5} I_M - \mu I_M \\
+\noalign{\vspace{8pt}}
+\frac{dI_L}{dt} &= \frac{1}{5} I_M - \frac{1}{11} I_L - \mu I_L \\
+\noalign{\vspace{8pt}}
+\frac{dR}{dt} &= \frac{1}{11} I_L - \mu R
+\end{align}
+\end{subequations}
+
+  \item
+
+We have four stages of infections. 
+Since each stage of infection results in secondary cases, each of the four stages must be considered individually and each corresponding $\R_0$ computed. The $\R_0$ of each stage is determined by the product of the corresponding transmission rate and average length of time an individual spends in that stage, which takes into account the probability of reaching and completing that particular stage of infection. The total $\R_0$ of the infectious disease is thus the sum of the reproductive numbers associated with each infected stage. The biological derivation of $\R_0$ is shown below.
+
+\begin{multline}\label{eq:pareto mle2}
+\R_0 = \beta_R \cdot \frac{\frac{1}{12}}{\frac{1}{12}+\mu}\cdot\frac{1}{\frac{1}{3}+\mu}+\beta_E \cdot \frac{\frac{1}{12}}{\frac{1}{12}+\mu}\cdot\frac{\frac{1}{3}}{\frac{1}{3}+\mu}\cdot\frac{1}{\frac{1}{4}+\mu}+\beta_M \cdot \frac{\frac{1}{12}}{\frac{1}{12}+\mu}\cdot\frac{\frac{1}{3}}{\frac{1}{3}+\mu}\cdot\frac{\frac{1}{4}}{\frac{1}{4}+\mu}\cdot\frac{1}{\frac{1}{5}+\mu} \\ +\beta_L \cdot \frac{\frac{1}{12}}{\frac{1}{12}+\mu}\cdot\frac{\frac{1}{3}}{\frac{1}{3}+\mu}\cdot\frac{\frac{1}{4}}{\frac{1}{4}+\mu}\cdot\frac{\frac{1}{5}}{\frac{1}{5}+\mu}\cdot\frac{1}{\frac{1}{11}+\mu}
+\end{multline}
+\begin{multline}\label{R01}
+\R_0 =  \frac{3\beta_R}{(12 \mu + 1)(3 \mu + 1)} + \frac{4\beta_E}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1)} +\frac{5\beta_M}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)} \\
++ \frac{11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)(11\mu+1)}
+\end{multline}
+
+
+\item 
+$ \mathcal{F}$ is the inflow of new infecteds and $F$ is the linearization at the DFE of $\mathcal{F}$.  $ \mathcal{V}$ is the outflow from infected individuals minus the inflow of non-new infecteds and $V$ is the linearization at the DFE of $\mathcal{V}$. 
+\begin{align*}
+\frac{d}{dt} \begin{pmatrix}
+E \\
+I_R \\
+I_E \\
+I_M \\
+I_L
+\end{pmatrix} &= \begin{pmatrix}
+S (\beta_R I _R + \beta_E I _E + \beta_M I_M + \beta_L I_L) - \mu E - \frac{1}{12} E \\
+\frac{1}{12} E - \frac{1}{3} I_R - \mu I_R\\
+\frac{1}{3} I_R - \frac{1}{4} I_E - \mu I_E \\
+\frac{1}{4} I_E - \frac{1}{5} I_M - \mu I_M \\
+\frac{1}{5} I_M - \frac{1}{11} I_L - \mu I_L
+\end{pmatrix} \\
+\mathcal{F} &= \begin{pmatrix}
+S (\beta_R I _R + \beta_E I _E + \beta_M I_M + \beta_L I_L) \\
+0\\
+0 \\
+0 \\
+0
+\end{pmatrix} \\
+F &= \begin{pmatrix}
+0 & \beta_R & \beta_E & \beta_M & \beta_L \\
+0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0
+\end{pmatrix}  \\
+\mathcal{V} &= \begin{pmatrix}
+\mu E + \frac{1}{12} E \\
+- \frac{1}{12} E + \frac{1}{3} I_R + \mu I_R\\
+- \frac{1}{3} I_R + \frac{1}{4} I_E + \mu I_E \\
+- \frac{1}{4} I_E + \frac{1}{5} I_M + \mu I_M \\
+- \frac{1}{5} I_M + \frac{1}{11} I_L + \mu I_L
+\end{pmatrix}  \\
+V &= \begin{pmatrix}
+\mu + \frac{1}{12} & 0 & 0 & 0 & 0\\
+- \frac{1}{12} & \frac{1}{3} + \mu & 0 & 0 &0 \\
+0 & - \frac{1}{3} & \frac{1}{4} + \mu & 0 & 0 \\
+0 & 0 & - \frac{1}{4} & \frac{1}{5} + \mu & 0 \\
+0 & 0 & 0 & - \frac{1}{5} & \frac{1}{11} + \mu
+\end{pmatrix} \\
+\end{align*}
+
+According to WolframAlpha, $V^{-1}$ is:
+\[
+\begin{pmatrix}
+\frac{12}{12\mu+1} & 0 & 0 & 0 & 0 \\
+\frac{3}{(12\mu+1)(3\mu+1)} & \frac{3}{3\mu + 1} & 0 & 0&0 \\
+\frac{4}{(12\mu+1)(3\mu+1)(4\mu+1)} & \frac{4}{(3\mu+1)(4\mu+1)} & \frac{4}{4 \mu + 1} & 0 & 0 \\
+\frac{5}{(12\mu+1)(3\mu+1)(4\mu+1)(5\mu+1)} & \frac{5}{(3\mu+1)(4\mu+1)(5\mu+1)} & \frac{5}{(4\mu+1)(5\mu+1)}& \frac{5}{5 \mu + 1}& 0 \\
+\frac{11}{(12\mu+1)(3\mu+1)(4\mu+1)(5\mu+1)(11\mu+1)}& \frac{11}{(3\mu+1)(4\mu+1)(5\mu+1)(11\mu+1)}& \frac{11}{(4\mu+1)(5\mu+1)(11\mu+1)} & \frac{11}{(5\mu+1)(11\mu+1)} & \frac{11}{11+\mu} 
+\end{pmatrix}.
+\]
+
+The eigenvalues of $FV^{-1}$ can be found to be 0 or the following:
+\begin{align*}
+\lambda &= \frac{\beta_R(660 \mu^3 + 357 \mu^2 + 60 \mu + 3)+4\beta_E(55 \mu^2 + 16 \mu + 1)+5\beta_M(11+\mu) + 11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)(11\mu+1)} \\
+\lambda &= \frac{3\beta_R(4 \mu + 1) (5 \mu + 1)   (11 \mu + 1)+ 4\beta_E (5 \mu + 1)(11 \mu + 1) + 5\beta_M(11+\mu) + 11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)(11\mu+1)}
+\end{align*}
+
+Because $\lambda = \rho(FV^{-1})$, $R_0$ is the following:
+\begin{multline}\label{R02}
+\R_0 = \frac{3\beta_R}{(12 \mu + 1)(3 \mu + 1)} + \frac{4\beta_E}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1)} + \frac{5\beta_M}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)} \\ + \frac{11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (4 \mu + 1) (5 \mu + 1)(11\mu+1)}
+\end{multline}
+
+We can see that \eqref{R01} and \eqref{R02} agree with each other.
+
+\item 
+According to the CDC, the altered virus is characterized by the early rash stage lasting twice as long compared with the naturally circulating virus. That is, for the altered virus, the early rash stage is expected to last 8 days instead of 4 days. In practice, the value of $\R_0$ for the altered smallpox virus, $\R_0^A$, can be obtained by changing values of 4 to 8 in \eqref{R02}:
+
+\begin{multline}\label{eq:R0_alt}
+\R_0^A = \frac{3\beta_R}{(12 \mu + 1)(3 \mu + 1)} + \frac{8\beta_E}{(12 \mu + 1)(3 \mu + 1)  (8 \mu + 1)} + \frac{5\beta_M}{(12 \mu + 1)(3 \mu + 1)  (8 \mu + 1) (5 \mu + 1)} \\ + \frac{11 \beta_L}{(12 \mu + 1)(3 \mu + 1)  (8 \mu + 1) (5 \mu + 1)(11\mu+1)}
+\end{multline}
+Intuitively, we expect that $\R_0^A > \R_0$. As in part (b), $\R_0^A$ is composed of the sum of the reproductive numbers associated with each of the four infected stages. The reproductive number associated with the first stage (rare infectiousness) is unchanged for for the altered virus, i.e. $\R_0^A = \R_0$. Comparing equations \eqref{R02} and \eqref{eq:R0_alt}, we find the relationship between the reproductive number corresponding to the second stage (extreme infectiousness) for the altered and unaltered virus is $\R_0^A =2  \R_0 \frac{4 \mu + 1}{8 \mu + 1}$, where the multiplicative factor $\frac{4 \mu + 1}{8 \mu + 1}$ represents the probability of progressing through the second stage with the altered virus as a proportion of the probability of progressing through the second stage with the unaltered virus. For the final stages (moderate and low infectiousness), the relationship between the altered and unaltered reproductive numbers is simply given by $\R_0^A = \R_0  \frac{4 \mu + 1}{8 \mu + 1}$.
+Moreover, under the assumption that $\mu \approx 0$, the quantity $\frac{4 \mu + 1}{8 \mu + 1} = 1$. Thus the difference in $\R_0$ that can be expected for the newly engineered virus as compared to the original virus is $4\beta_E$.
+
+
+\item
+
+Provided with the natural history of smallpox and the prediction that upon successful alteration, the early rash stage of the the newly engineered smallpox virus will be twice as long, we were able to use well-established theory to estimate the basic reproduction number, $\R_0$ (the average number
+of secondary cases caused by a primary case at the beginning of the epidemic). The results of our analysis suggest that the increase in the reproductive number for the altered virus, relative to the $\R_0\approx 5$ of the original virus, will be four times the transmission rate associated with the early rash stage. 
+The final size of the epidemic based on the $\R_0$ of the unaltered virus corresponds to approximately 99$\%$ of the population contracting the virus. Since the reproductive number for the altered virus is estimated to be between 5 and $5 + 4\beta_E$, we expect the size of the epidemic to exceed 99$\%$. Efforts should be directed towards the development of a vaccine to protect against this newly altered smallpox virus in the event of a bioterrorist attack. 
+
+
+\end{enumerate}
+
+\bigskip
+\centerline{\bf--- END OF ASSIGNMENT ---}
+
+\bigskip
+Compile time for this document:
+\today\ @ \thistime
+
+\end{document}
