@@ -70,7 +70,7 @@ Eq2 <- function(t, state2, parameters2){
   return(out2)
 }
 
-####################BETA1=0.6 & BETA2=0.4####################
+####################BETA1 & BETA2####################
 b1 = 0.54*1.2
 b2 = 0.54*0.8
 
@@ -111,70 +111,3 @@ plot(out2(b1,b2)[,1],out2(b1,b2)[,5] + out2(b1,b2)[,4], type = "l", ylim = c(0,m
 lines(out1(b)[,1],out1(b)[,3], type = "l",  lwd = 2, col = 1)
 legend("topright", c("Mixed", "Single"), col = c("cyan3", 1), lwd = c(2,2))
 
-
-###################################################################
-###########################FINAL SIZE#############################
-###################################################################
-SIR <- function(time,state, parameters){
-  with(as.list(c(state,parameters)),{
-    dS1 <- -b1*S1*(I1+I2)
-    dS2 <- -b2*S2*(I1+I2)
-    dI1 <- b1*S1*(I1+I2)
-    dI2 <- b2*S2*(I1+I2)
-    return(list(c(dS1,dS2,dI1, dI2)))
-  })
-}
-
-init <- c(S1 = 0.213, S2 = 0.785, I1 = 0.001, I2 = 0.001)
-
-time <- seq(0,150, by=0.01)
-b1 <- seq(0,2, by =0.1)
-
-res <- vector(length(b1), mode = "list")
-
-for (k in seq_along(b1)){
-  res[[k]] <- ode(y = init, times = time, func = SIR, 
-                  parms = c(b1[k],b2=0.5))
-}
-
-out3 <- function(t,b2,y=0.3){
-  parameters2 <- function(b1, b2, y = 0.3){
-    b1 <- seq(0,2, by=0.001)
-    b2 <- rep(b2, 2000)
-    y <- rep(y,2000)
-    X<- data_frame(b1,b2,y)
-    return(X)
-  }
-  state2 <- c(S1 = 0.213, S2 = 0.785, I1 = 0.001, I2 = 0.001)
-  Eq2 <- function(t, state2, parameters2){
-    with(as.list(c(state2,parameters2)),{
-      dS1 <- -b1*S1*(I1+I2)
-      dS2 <- -b2*S2*(I1+I2)
-      dI1 <- b1*S1*(I1+I2) - y*I1
-      dI2 <- b2*S2*(I1+I2) - y*I2
-      list(c(dS1, dS2, dI1, dI2))
-    })
-  }
-  times2 <- seq(0, 150, by = 0.01)
-  out2 <- ode(y=state2, times = times2, 
-              func = Eq2, parms = parameters2(b1=b1,b2=b2))
-  return(out2)
-}
-
-{parameters3<-c(b1 = 0.6, b2 = 0.4, y = 0.3)
-state3 <- c(S1 = 0.213, S2 = 0.785, I1 = 0.001, I2 = 0.001)
-Eq3 <- function(t, state3, parameters3){
-  with(as.list(c(state3,parameters3)),{
-    dS1 <- -b1*S1*(I1+I2)
-    dS2 <- -b2*S2*(I1+I2)
-    dI1 <- b1*S1*(I1+I2)
-    dI2 <- b2*S2*(I1+I2)
-    list(c(dS1, dS2, dI1, dI2))
-  })
-}
-times3 <- seq(0, 150, by = 0.01)
-out3 <- ode(y=state3, times = times3, 
-            func = Eq3, parms = parameters3)}
-
-plot(out3[,1], out3[,4], type = "l")
-plot(out3[,1], out3[,5], type = "l")

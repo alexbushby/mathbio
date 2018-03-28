@@ -1,0 +1,29 @@
+% We need layers to draw the block diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\begin{tikzpicture}
+% Susceptible
+\path (1.,2.) node [susceptible] (S1)  {$S_{\mathrm{1}}$};
+\path (1.,0.) node [susceptible] (S2)  {$S_{\mathrm{2}}$};
+% Infectious
+\path (5.,2.) node [infectious] (I1) {$I_1$};
+\path (5.,0.) node [infectious] (I2) {$I_{2}$};
+ % Removed
+\path (9.,2.) node [removed] (R1) {$R_1$};
+\path (9.,0.) node [removed] (R2) {$R_2$};
+% Arrows
+\draw [->] (I1) -- node [above] {$\mathbf{\gamma}$} (R1.west);
+\draw [->] (I2) -- node [above] {$\mathbf{\gamma}$} (R2.west);
+\draw [->] (S1) -- node [above] {$\mathbf{\beta}_1$} (I1.west);
+\draw [->] (S2) -- node [above] {$\mathbf{\beta}_2$} (I2.west);
+
+\begin{pgfonlayer}{background}
+\path[fill=blue!10,rounded corners] (-0.5,-0.8) rectangle (2.5,2.8);
+\path[fill=red!10,rounded corners] (3.5,-0.8) rectangle (6.5,2.8);
+\path[fill=green!10,rounded corners] (7.5,-0.8) rectangle (10.5,2.8);
+\path[rounded corners, draw=black!50, dashed] (-0.5,1.2) rectangle (10.5,2.8);
+\path[rounded corners, draw=black!50, dashed] (-0.5,-0.8) rectangle (10.5,0.8);
+\end{pgfonlayer}
+\end{tikzpicture}

@@ -1,0 +1,11 @@
+\begin{tikzpicture}
+% Susceptible
+\path (1.,2.) node [susceptible] (S)  {$S$};
+% Infectious
+\path (5.,2.) node [infectious] (I) {$I$};
+ % Removed
+\path (9.,2.) node [removed] (R) {$R$};
+% arrows
+\draw [->] (I) -- node [above] {$\mathbf{\gamma}$} (R.west);
+\draw [->] (S) -- node [above] {$\mathbf{\beta}$} (I.west);
+\end{tikzpicture}

@@ -1,0 +1,419 @@
+\documentclass[a4paper, 12pt, journal]{ieeeconf}  
+\usepackage{cite}
+
+\overrideIEEEmargins
+
+\title{\LARGE \bf
+Homogeneously-Mixed Models versus Heterogeneously-Mixed Models in Pandemic Influenza Epidemics
+}
+
+\author{Alexandra Bushby$^{1}$, Alexei Kuzmin$^{2}$, Claudia Tugulan$^{3}$, Roger Zhang$^{4}$% <-this % stops a space
+}
+\input{4mbppreamble} 
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+We compare a homogeneously-mixed model with a heterogeneously-mixed model for an Influenza epidemic, where our heterogeneous model considers the factor of interaction. To consider interaction, the population is divided into two classes; high interaction and low interaction. We determine how this can affect the dynamics of Influenza. In addition to analyzing the interaction factor, we will explore mathematically how the usage of antipyretics can also affect, or not affect, the dynamics of Influenza in conjunction with our heterogeneously-mixed model.
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODUCTION}
+A salient result of the 2013 study conducted by Earn \textit{et al.} \cite{Earn_fever} is that fever suppression, at the population level, may increase transmission of associated infections.  This may potentially be attributed to an individual feeling better and therefore having a higher probability of interaction within a population \cite{Earn_fever}. In addition, Influenza viral shedding has a longer duration and a higher rate, thus increasing the pathogen's transmission rate \cite{ferret_study}. The theoretical population-level consequence of taking antipyretics is a higher transmission rate, which leads to larger epidemics and consequently to greater morbidity and mortality \cite{Kermack700,Ma2006,Earn_fever}.
+
+A potentially important effect not taken into account by the study is age-dependent mixing. Children may play a disproportionate role in influenza transmission, in part, due to their high rate of contact with each other and their treatment with antipyretic medication \cite{antipyretic_treatment_children}.
+Taking this effect into consideration could potentially change the estimated lower bound for the increase in the expected number of influenza cases and deaths. 
+
+The traditional susceptible – infectious – recovered (SIR) modeling framework, shown in \fref{homo}, has been used extensively to examine and explain the qualitative dynamics observed for pandemic Influenza \cite{IDhumans:dynamics&control}.
+
+\section{METHODS}
+
+%[thpb]=[top,here,page(special page for floats only),bottom]
+\begin{figure}[thpb]
+	\centering
+   	\resizebox{0.46\textwidth}{!}{\input{SIR.tikz}}
+    \caption{\textbf{Model A:} susceptible – infectious – recovered (SIR) modeling framework for homogeneously mixed population.}\label{F:homo}
+\end{figure}
+
+\begin{figure}[thpb]
+    \resizebox{0.46\textwidth}{!}{\input{SIR2.tikz}}
+    \caption{\textbf{Model B/C:} susceptible – infectious – recovered (SIR) modeling framework for age-dependent mixed population.}\label{F:het}
+\end{figure}
+
+\subsection{Assumptions}
+We propose a two compartment model whose compartments correspond to contact frequency; either high or low. We classify high contact individuals as school-age individuals who are younger than nineteen and low contact individuals as individuals who are older than nineteen. According to census data, the initial proportion of the population in the high contact compartment is 21.3\% \cite{statsCanada}. We will assume that once classified, individuals remain in their respective compartments for the duration of the Influenza epidemic and that in each compartment, everyone is equally susceptible and equally infectious. Further, we assume the recovery rate is the same for all individuals.
+
+Our model does not take into account diseased induced mortality (or naturally induced mortality) because it has a negligible population-level effect for influenza \cite{InfluenzaPeriod}.
+Furthermore, since we are only interested in the behavior of a single epidemic, individuals are assumed to acquire permanent immunity during a single epidemic.
+Evidence for transmission of influenza by infected individuals before they show symptoms is weak \cite{InfluenzaLatentPeriod}. Thus, the latent period is neglected by our proposed framework. Finally, our model does not consider the possible effects of vaccination against Influenza. 
+
+\subsection{Framework}
+
+A homogeneously-mixed population can be modeled, using the framework shown in \fref{homo}, by the system of non-linear ordinary differential equations \eqref{eq:homo}, where $\beta$ is the transmission rate, $\gamma$ is the infection rate and $S$, $I$ and $R$ is the proportion of the population susceptible, infected and recovered from Influenza respectively. 
+\begin{subequations}\label{eq:homo}
+\begin{eqnarray}
+\frac{dS}{dt} =& -\beta S I \label{eq:SIRdSdt}\\
+\frac{dI}{dt} =& \beta S I - \gamma I \label{eq:SIRdIdt}\\
+\frac{dR}{dt} =& \gamma I \label{eq:SIRdRdt}
+\end{eqnarray}
+\end{subequations}
+
+A heterogeneously-mixed population can be modeled, using the framework shown in \fref{het}, by the system of non-linear ordinary differential equations \eqref{eq:het}, where $\beta_1$ is the transmission rate for the \emph{high interaction} compartment, $\beta_2$ is the transmission rate for the \emph{low interaction} compartment. One should note that $\beta_1 = \beta\cdot\alpha_1$, where $\alpha_1$ is the \textit{transmission interactivity factor} for the high interaction compartment and $\beta_2 = \beta\cdot\alpha_2$, where $\beta_2$ is the \textit{transmission interactivity factor} for the low interaction compartment. $\alpha_1$ and $\alpha_2$ is the factor by which the probability of infection increases in the the high interaction compartment and low interaction compartment respectively. $S_1$, $I_1$ and $R_1$ is the proportion of individuals in the high interaction compartment that are susceptible, infected and recovered respectively. Similarly, $S_2$, $I_2$ and $R_2$ is the proportion of individuals in the low interaction compartment that are susceptible, infected and recovered respectively.
+
+\begin{subequations}\label{eq:het}
+\begin{eqnarray}
+\frac{dS_1}{dt} =& -\beta_1 S_1 (I_1 + I_2) \label{eq:SIRdS1dt}\\
+\frac{dS_2}{dt} =& -\beta_2 S_2 (I_1 + I_2)\label{eq:SIRdS2dt}\\
+\frac{dI_1}{dt} =& \beta_1 S_1 (I_1 + I_2) - \gamma I_1\label{eq:SIRdI1dt}\\
+\frac{dI_2}{dt} =& \beta_2 S_2 (I_1 + I_2) - \gamma I_2 \label{eq:SIRdI2dt}\\
+\frac{dR_1}{dt} =& \gamma I_1 \label{eq:SIR_het_dr} \label{eq:SIRdR1dt}\\
+\frac{dR_2}{dt} =& \gamma I_2 \label{eq:SIRdR2dt}
+\end{eqnarray}
+\end{subequations}
+Note that since equations \eqref{eq:SIRdSdt}-\eqref{eq:SIRdIdt} and \eqref{eq:SIRdS1dt}-\eqref{eq:SIRdI2dt} do not depend on the recovered class $R$, equations \eqref{eq:SIRdRdt}, \eqref{eq:SIRdR1dt}, and \eqref{eq:SIRdR2dt} can be ignored.
+
+\subsection{Parameters}
+
+The basic reproduction number $\R_0$ (the average number of secondary cases caused by a given primary case in a wholly susceptible population) is given by:
+\begin{equation}\label{eq:Ro}
+\R_0=\frac{\beta}{\gamma}
+\end{equation}
+We know for the flu that $\R_0 = 1.8$ \cite{reproductiveno.influenza}, the mean infectious period is $\gamma^{-1} = 3.33$ \cite{reproductiveno.influenza} which indicates that 
+$\beta = 0.54$ (for the homogeneously-mixed model).
+
+\section{RESULTS}
+
+\ref{fig:contact} shows the percentage of individuals who are susceptible and infected at a given time for the two compartments, and the total population, using the framework shown in \fref{het}. Initially, $S_1 = 0.213$ and $S_2 = 0.785$. After the epidemic occurred, the proportion of susceptibles remaining was $S_1 = 0.0550$ and $S_2 = 0.3185$. This means that the susceptible class with a higher interaction rate had 74\% of their population get Influenza and the susceptible class with a lower transmission rate had 59\% of their population get Influenza over 150 days. Clearly, and logically, a higher interaction rate will lead to a higher probability of inheriting Influenza. Also shown on \ref{fig:contact} is when the peak prevalence occurs. For the high and low interaction compartment, the peak prevalence is 0.0205 at 28 days and 0.0587 at 29 days respectively. This implies a higher transmission rate will generate an earlier peak prevalence. 
+
+More interestingly, \ref{fig:Homovshetero} provides a comparison of Models A and B. The percentage of individuals who are susceptible at a given time varies quite drastically between the two models, particularly at later times. Given $\beta = 0.54$, $\alpha_1 = 1.2$, $\alpha_2 = 0.8$ and $\gamma = 0.3$, our calculations predict that the maximum percentage of the population infected at a given time is 11.90\%, using Model A, and 7.91\%, using Model B. In addition, the estimated final size of the epidemic is 0.7335 $(1-0.2665)$, according to Model A, and is 0.6265 $(1 - 0.3735)$, according to Model B. 
+
+Using the final size calculated from this simulation, one can find the value of $\R_0$ from the final size using \eqref{Eq:Z}, which was derived by Kermack and McKendrick in 1927 \cite{Kermack700}. Ma \& Earn, 2006 \cite{Ma2006} showed that \eqref{Eq:Z} can be used for more realistic models, and therefore, we will be using it for our analysis.
+\begin{equation}\label{Eq:Z}
+Z = 1 - e^{-\R_0 Z}
+\end{equation}
+
+\ref{fig:R_0} gives a comparison of the transmission rate for a certain compartment by fixing the transmission rate of the other compartment by 0.54. From this graph, it's evident that $\beta_1$ is mainly driving the dynamics of this model as the resulting $\R_0$ at a high $\beta$ is large when we fix $\beta_2$. It's interesting to note that even at a certain value of $\beta$, the value of $\R_0$ does not change with an increasing $\beta$.
+
+Model B provides a contact-structured model that allows us to separate the population into two classes based upon the individual's interactivity. These dynamics of Model B differ greatly from the dynamics of Model A, which seems to indicate that including this contact-structure is essential. To test this hypothesis, one would need to compare these models against Influenza epidemic data, with the initial conditions and parameters reflecting the population being studied accurately. 
+\\
+
+Earn \textit{et al.} discuss that their model incorporating the use of antipyretics should also consider the effect of age \cite{Earn_fever}. In our case, we will consider antipyretic use in conjunction with Model B, which gives us Model C. Model C can be represented with the same set of equations as Model B \eqref{eq:het}, except $\beta_1 = \beta \cdot \alpha_1 \cdot f_1$ and $\beta_2 = \beta \cdot \alpha_2 \cdot f_2$, where $f_1$ and $f_2$ is the increased overall increase in the transmission rate due to antipyretics, which is called the \textit{population transmission enhancement factor}. Earn \textit{et al.} derived \eqref{Eq:f}, where $p$ is the proportion of individuals taking antipyretics that have Influenza and  $f_i$ is the increase in infectivity for an individual, which is called the \textit{individual transmission enhancement factor}.
+
+\begin{equation}\label{Eq:f}
+f_p = 1 + p(f_i - 1)
+\end{equation}
+
+Earn \textit{et al.} estimate that $f_i = 1.06$ and using assumptions mentioned in the paper, we will conclude that $p = 0.603$, which gives $f_p = 1.03618$ for the high interactivity class and $p=0.325$, which gives $f_p = 1.0195$ and for the low interactivity class.
+
+Figure \ref{fig:ModelC} gives a comparison for Models B and C. Comparing the two models, one can see that the models do not have as much of a drastic difference from each other, compared with the difference between Model A and Model B. 
+
+%\alex{maximum infected for Model C is 0.02234989 for high contact 0.06368935 for low contact, estimated final size 0.698 (1-0.3043428) - low contact 0.05023666 - high contact}
+
+%\alex{estimated final size 0.6454 (1-0.3545795)}
+
+
+<<include=FALSE>>=
+library(deSolve)
+library(dplyr)
+library(tikzDevice)
+
+###################################################################
+####################HOMOGENEOUSLY-MIXED MODEL######################
+###################################################################
+
+out1 <- function(b,y=0.3){
+  parameters1 <- function(b, y = 0.3){
+    X<- c(b,y)
+    return(X)
+  }
+  state1 <- c(S = 0.998, I = 0.002)
+  Eq1 <- function(t, state1, parameters1){
+    with(as.list(c(state1,parameters1)),{
+      dS <- -b*S*I
+      dI <- b*S*I - y*I
+      list(c(dS,dI))
+    })
+  }
+  times1 <- seq(0, 150, by = 0.01)
+  out1 <- ode(y=state1, times = times1, 
+              func = Eq1, parms = parameters1)
+  return(out1)
+}
+
+####################BETA=0.5####################
+b = 0.54
+
+Min <- min(out1(b)[,2])
+
+M <- max(out1(b)[,3]) ##maximum percentage of infected individuals (low)
+a <- out1(b)[which(out1(b)[,3]> M - 0.000001 & out1(b)[,3] <  M + 0.000001),]
+
+par(mfrow=c(1,2))
+
+plot(out1(b)[,1],out1(b)[,2], type = "l", ylim = c(0,1), xlab="Time (Days)", ylab = "Susceptible", col = 1, lwd = 2)
+
+plot(out1(b)[,1],out1(b)[,3], type = "l", ylim = c(0, M+0.03), xlab = "Time (Days)", ylab = "Infected", lwd = 2, col = 1)
+segments(x0=a[1,1], y0=0, x1=a[1,1], y1=a[1,3], col = 1)
+
+  ###################################################################
+####################HETEROGENEOUSLY-MIXED MODEL####################
+###################################################################
+
+out2 <- function(b1,b2,y=0.3){
+  parameters2 <- function(b1, b2, y = 0.3){
+    X<- c(b1,b2,y)
+    return(X)
+  }
+  state2 <- c(S1 = 0.213, S2 = 0.785, I1 = 0.001, I2 = 0.001)
+  Eq2 <- function(t, state2, parameters2){
+    with(as.list(c(state2,parameters2)),{
+      dS1 <- -b1*S1*(I1+I2)
+      dS2 <- -b2*S2*(I1+I2)
+      dI1 <- b1*S1*(I1+I2) - y*I1
+      dI2 <- b2*S2*(I1+I2) - y*I2
+      list(c(dS1, dS2, dI1, dI2))
+    })
+  }
+  times2 <- seq(0, 150, by = 0.01)
+  out2 <- ode(y=state2, times = times2, 
+              func = Eq2, parms = parameters2(b1=b1,b2=b2))
+  return(out2)
+}
+
+b1 = 0.54*1.2
+b2 = 0.54*0.8
+
+MAXI <- max(out2(b1,b2)[,4] + out2(b1,b2)[,5])
+MINS <- min(out2(b1,b2)[,2] + out2(b1,b2)[,3])
+
+mins1 <-  min(out2(b1,b2)[,2])
+mins2 <- min(out2(b1,b2)[,3])
+
+M1 <- max(out2(b1,b2)[,4]) ##maximum percentage of infected individuals (high contact)
+a1 <- out2(b1,b2)[which(out2(b1,b2)[,4]>M1-0.0000001 & out2(b1,b2)[,4] < M1 + 0.0000001),]
+
+M2 <- max(out2(b1,b2)[,5]) ##maximum percentage of infected individuals (low contact)
+a2 <- out2(b1,b2)[which(out2(b1,b2)[,5]>M2 -0.0000001 & out2(b1,b2)[,5] < M2 + 0.0000001),]
+@
+
+<<echo=FALSE, fig.pos="thpb", fig.align="centre", fig.cap = "\\label{fig:contact}A higher transmission rate seems to imply that the peak of the epidemic will occur earlier and the epidemic will die out quicker. The final size can also be determined from the graph on the left. However, this will be discussed later.">>=
+ par(mfrow=c(1,2),oma = c(0,0,2,0))
+
+plot(out2(b1,b2)[,1],out2(b1,b2)[,3], type = "l", ylim = c(0,1), xlab="Time (Days)", ylab = "Susceptible", col = "mediumorchid", lwd = 2)
+lines(out2(b1,b2)[,1],out2(b1,b2)[,2], type="l", col = "mediumblue", lwd = 2)
+lines(out2(b1,b2)[,1],out2(b1,b2)[,3] + out2(b1,b2)[,2], type="l", col = "cyan3", lwd = 2)
+legend("topright", c("Total", "Low Contact", "High Contact"), col = c("cyan3", "mediumorchid", "mediumblue"), lwd = c(2,2,2))
+
+plot(out2(b1,b2)[,1],out2(b1,b2)[,5], type = "l", ylim = c(0,max(M1,M2)+0.03), xlab = "Time (Days)", ylab = "Infected", col = "mediumorchid", lwd=2)
+lines(out2(b1,b2)[,1],out2(b1,b2)[,4], type="l", col = "mediumblue", lwd = 2)
+lines(out2(b1,b2)[,1],out2(b1,b2)[,5] + out2(b1,b2)[,4], type="l", col = "cyan3", lwd =2)
+segments(x0=a1[1,1], y0=0, x1=a1[1,1], y1=a1[1,4], col = "mediumblue", lwd = 0.5)
+segments(x0=a2[1,1], y0=0, x1=a2[1,1], y1=a2[1,5], col = "mediumorchid", lwd = 0.5)
+legend("topright", c("Total", "Low Contact", "High Contact"), col = c("cyan3", "mediumorchid", "mediumblue"), lwd = c(2,2,2))
+@
+
+
+<<include = FALSE>>=
+out2 <- function(b1,b2,y=0.3){
+  parameters2 <- function(b1, b2, y = 0.3){
+    X<- c(b1,b2,y)
+    return(X)
+  }
+  state2 <- c(S1 = 0.213, S2 = 0.785, I1 = 0.001, I2 = 0.001)
+Eq2 <- function(t, state2, parameters2){
+  with(as.list(c(state2,parameters2)),{
+    dS1 <- -b1*S1*(I1+I2)
+    dS2 <- -b2*S2*(I1+I2)
+    dI1 <- b1*S1*(I1+I2) - y*I1
+    dI2 <- b2*S2*(I1+I2) - y*I2
+    list(c(dS1, dS2, dI1, dI2))
+  })
+}
+  times2 <- seq(0, 150, by = 0.01)
+  out2 <- ode(y=state2, times = times2, 
+              func = Eq2, parms = parameters2(b1=b1,b2=b2))
+  return(out2)
+}
+
+####################BETA1 & BETA2####################
+b1 = 0.54*1.2
+b2 = 0.54*0.8
+
+MAXI <- max(out2(b1,b2)[,4] + out2(b1,b2)[,5])
+MINS <- min(out2(b1,b2)[,2] + out2(b1,b2)[,3])
+
+mins1 <-  min(out2(b1,b2)[,2])
+mins2 <- min(out2(b1,b2)[,3])
+
+M1 <- max(out2(b1,b2)[,4]) ##maximum percentage of infected individuals (high contact)
+a1 <- out2(b1,b2)[which(out2(b1,b2)[,4]>M1-0.0000001 & out2(b1,b2)[,4] < M1 + 0.0000001),]
+
+M2 <- max(out2(b1,b2)[,5]) ##maximum percentage of infected individuals (low contact)
+a2 <- out2(b1,b2)[which(out2(b1,b2)[,5]>M2 -0.0000001 & out2(b1,b2)[,5] < M2 + 0.0000001),]
+@
+
+
+<<echo=FALSE, fig.pos="thpb", fig.align="centre", fig.cap = "\\label{fig:Homovshetero}Model B has a much better outcome compared with the homogeneously-mixed model as the peak of the epidemic contains approximately half the of the size. It's also evident that the final size of the epidemic for Model B is much less than the final size for Model A.">>=
+ par(mfrow=c(1,2),oma = c(0,0,2,0))
+plot(out2(b1,b2)[,1],out2(b1,b2)[,3] + out2(b1,b2)[,2], type = "l", ylim = c(0,1), xlab="Time (Days)", ylab = "Susceptible", col = "cyan3", lwd = 2)
+lines(out1(b)[,1],out1(b)[,2], type = "l",col = 1, lwd = 2)
+legend("topright", c("Mixed", "Single"), col = c("cyan3", 1), lwd = c(2,2))
+
+plot(out2(b1,b2)[,1],out2(b1,b2)[,5] + out2(b1,b2)[,4], type = "l", ylim = c(0,max(max(M1,M2)+0.03,M+0.03)), xlab = "Time (Days)", ylab = "Infected", col = "cyan3", lwd=2)
+lines(out1(b)[,1],out1(b)[,3], type = "l",  lwd = 2, col = 1)
+legend("topright", c("Mixed", "Single"), col = c("cyan3", 1), lwd = c(2,2))
+@
+
+<<include = FALSE>>=
+rm(list = ls(all = TRUE)) 
+SIR <- function(time,state,parameters) {
+  with(as.list(c(state,parameters)),{
+    dS1 <- -b1*S1*(I1+I2)
+    dS2 <- -b2*S2*(I1+I2)
+    dI1 <- b1*S1*(I1+I2) - gamma*I1
+    dI2 <- b2*S2*(I1+I2) - gamma*I2
+    dR <- gamma*(I1+I2)
+    return(list(c(dS1,dS2,dI1,dI2,dR)))
+  })
+}
+init <-  c(S1 = 0.213, S2 = 0.785, I1 = 0.001, I2 = 0.001, R=0) #initial conditions for odes
+time <- seq(0,150,by=0.01) #time period
+
+betavec1 <- seq(0.1,3,by=0.1)
+
+res1 <- vector(length(betavec1),mode="list")
+
+for (k in seq_along(betavec1)){ #range of values for beta
+  res1[[k]] <- ode(y=init,times=time,func=SIR,
+                  parms=c(b1=betavec1[k], gamma=0.3, b2=0.54))
+}
+
+names(res1) <- betavec1  ## to get beta value incorporated in results
+dd1 <- dplyr::bind_rows(lapply(res1,as.data.frame),.id="beta1")
+dd1$b1 <- as.numeric(dd1$beta1)
+
+newdata1 <-dd1[ which(dd1$time==150), ]
+
+##final size:R_0= log(1-z)/-z
+newdata1$R_0 <- log(1-newdata1$R)/-newdata1$R
+
+
+##changing beta_2
+betavec2 <- seq(0.1,3,by=0.1)
+
+res2 <- vector(length(betavec2),mode="list")
+
+for (k in seq_along(betavec2)){ #range of values for beta
+  res2[[k]] <- ode(y=init,times=time,func=SIR,
+                   parms=c(b2=betavec2[k], gamma=0.3, b1=0.54))
+}
+
+names(res2) <- betavec2  ## to get beta value incorporated in results
+dd2 <- dplyr::bind_rows(lapply(res2,as.data.frame),.id="beta2")
+dd2$b2 <- as.numeric(dd2$beta2)
+
+newdata2 <-dd2[ which(dd2$time==150), ]
+
+##final size:R_0= log(1-z)/-z
+newdata2$R_0 <- log(1-newdata2$R)/-newdata2$R
+@
+
+<<echo=FALSE,fig.pos="thpb", fig.align="centre", fig.cap = "\\label{fig:R_0}I couldn't figure out how to add equations to captions, which was essential to write this caption", warning=FALSE>>=
+plot(newdata2$beta2, newdata2$R_0, type = "l", col = "blue", xlab = "\beta", lwd = 2)
+lines(newdata1$beta1, newdata1$R_0, type = "l", col = "red", lwd = 2)
+legend("bottomright", c("\beta_1 = 0.54","\beta_2 = 0.54"), col = c("red", "blue"),lwd = c(2,2))
+@
+
+<<include=FALSE>>=
+###################################################################
+####################MODEL B and MODEL C####################
+###################################################################
+out2 <- function(b1,b2,y=0.3){
+  parameters2 <- function(b1, b2, y = 0.3){
+    X<- c(b1,b2,y)
+    return(X)
+  }
+  state2 <- c(S1 = 0.213, S2 = 0.785, I1 = 0.001, I2 = 0.001)
+Eq2 <- function(t, state2, parameters2){
+  with(as.list(c(state2,parameters2)),{
+    dS1 <- -b1*S1*(I1+I2)
+    dS2 <- -b2*S2*(I1+I2)
+    dI1 <- b1*S1*(I1+I2) - y*I1
+    dI2 <- b2*S2*(I1+I2) - y*I2
+    list(c(dS1, dS2, dI1, dI2))
+  })
+}
+  times2 <- seq(0, 150, by = 0.01)
+  out2 <- ode(y=state2, times = times2, 
+              func = Eq2, parms = parameters2(b1=b1,b2=b2))
+  return(out2)
+}
+
+b1 = 0.54*1.2*1.03618
+b2 = 0.54*0.8*1.0195
+
+MAXI <- max(out2(b1,b2)[,4] + out2(b1,b2)[,5])
+MINS <- min(out2(b1,b2)[,2] + out2(b1,b2)[,3])
+
+mins1 <-  min(out2(b1,b2)[,2])
+mins2 <- min(out2(b1,b2)[,3])
+
+M1 <- max(out2(b1,b2)[,4]) ##maximum percentage of infected individuals (high contact)
+a1 <- out2(b1,b2)[which(out2(b1,b2)[,4]>M1-0.0000001 & out2(b1,b2)[,4] < M1 + 0.0000001),]
+
+M2 <- max(out2(b1,b2)[,5]) ##maximum percentage of infected individuals (low contact)
+a2 <- out2(b1,b2)[which(out2(b1,b2)[,5]>M2 -0.0000001 & out2(b1,b2)[,5] < M2 + 0.0000001),]
+@
+
+<<echo=FALSE,fig.pos="thpb", fig.align="centre", fig.cap = "\\label{fig:ModelC}Provides a comparison for Model B and Model C. The figure on the left shows the proportion of susceptible individuals at a given time for the low and high contact individuals in Model B and Model C. The figure on the right shows the proportion of infected individuals at a given time for the low and high contact individuals in Model B and Model C.">>=
+par(mfrow=c(1,2),oma = c(0,0,2,0)) #change b1 and b2 to include enhancement factor for second row of plots
+
+b1 = 0.54*1.2
+b2 = 0.54*0.8
+plot(out2(b1,b2)[,1],out2(b1,b2)[,3], type = "l", ylim = c(0,1), xlab="Time (Days)", ylab = "Susceptible", col = "mediumorchid", lwd = 2)
+lines(out2(b1,b2)[,1],out2(b1,b2)[,2], type="l", col = "mediumblue", lwd = 2)
+b1 = 0.54*1.2*1.03618
+b2 = 0.54*0.8*1.0195
+lines(out2(b1,b2)[,1],out2(b1,b2)[,3], type = "l", ylim = c(0,1), xlab="Time (Days)", ylab = "Susceptible", col = "black", lwd = 2)
+lines(out2(b1,b2)[,1],out2(b1,b2)[,2], type="l", col = "red", lwd = 2)
+legend("topright", c("Low Contact (B)", "Low Contact (C)", "High Contact (B)", "High Contact (C)"), col = c("mediumorchid", "black", "blue", "red"), lwd = c(2,2,2,2))
+
+b1 = 0.54*1.2
+b2 = 0.54*0.8
+plot(out2(b1,b2)[,1],out2(b1,b2)[,5], type = "l", ylim = c(0,max(M1,M2)+0.03), xlab = "Time (Days)", ylab = "Infected", col = "mediumorchid", lwd=2)
+lines(out2(b1,b2)[,1],out2(b1,b2)[,4], type="l", col = "mediumblue", lwd = 2)
+b1 = 0.54*1.2*1.03618
+b2 = 0.54*0.8*1.0195
+lines(out2(b1,b2)[,1],out2(b1,b2)[,5], type = "l", col = "black", lwd=2)
+lines(out2(b1,b2)[,1],out2(b1,b2)[,4], type="l", col = "red", lwd = 2)
+legend("topright", c("Low Contact (B)", "Low Contact (C)", "High Contact (B)", "High Contact (C)"), col = c("mediumorchid", "black", "blue", "red"), lwd = c(2,2,2,2))
+@
+
+
+\section{CONCLUSIONS}
+-Elaborate on the importance of the work or suggest applications and extensions. 
+
+\addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
+
+\section*{Questions}
+
+\begin{itemize}
+\item How do you add equations to figure captions? We can't seem to find a way to do it.
+\item How do you make your graphs cover the two columns instead of one (i.e. we want two sets of graphs per one page (instead of having it embedded in our document))
+\item How do you add latex equations to ylab and xlab?
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section*{APPENDIX}
+%(If we end up needing one)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{vancouver}
+\bibliography{TheFourHumours}
+
+\end{document}
+
