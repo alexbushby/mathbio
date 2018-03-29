@@ -12,7 +12,7 @@ SIR <- function(time,state,parameters) {
 init <-  c(S1 = 0.213, S2 = 0.785, I1 = 0.001, I2 = 0.001, R=0) #initial conditions for odes
 time <- seq(0,150,by=0.01) #time period
 
-betavec1 <- seq(0.1,3,by=0.01)
+betavec1 <- seq(0.1,3,by=0.1)
 
 res1 <- vector(length(betavec1),mode="list")
 

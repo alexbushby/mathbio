@@ -1,0 +1,75 @@
+\begin{thebibliography}{10}
+
+\bibitem{Earn_fever}
+Earn DJD, Andrews PW, Bolker BM.
+\newblock Population-level effects of suppressing fever.
+\newblock Proceedings of the Royal Society of London B: Biological Sciences.
+  2014;281(1778).
+\newblock Available from:
+  \url{http://rspb.royalsocietypublishing.org/content/281/1778/20132570}.
+
+\bibitem{ferret_study}
+Husseini RH, Sweet C, Collie MH, Smith H.
+\newblock Elevation of Nasal Viral Levels by Suppression of Fever in Ferrets
+  Infected with Influenza Viruses of Differing Virulence.
+\newblock The Journal of Infectious Diseases. 1982;145(4):520--524.
+\newblock Available from: \url{+ http://dx.doi.org/10.1093/infdis/145.4.520}.
+
+\bibitem{Kermack700}
+Kermack WO, McKendrick AG.
+\newblock A contribution to the mathematical theory of epidemics.
+\newblock Proceedings of the Royal Society of London A: Mathematical, Physical
+  and Engineering Sciences. 1927;115(772):700--721.
+\newblock Available from:
+  \url{http://rspa.royalsocietypublishing.org/content/115/772/700}.
+
+\bibitem{Ma2006}
+Ma J, Earn DJD.
+\newblock Generality of the Final Size Formula for an Epidemic of a Newly
+  Invading Infectious Disease.
+\newblock Bulletin of Mathematical Biology. 2006 Apr;68(3):679--702.
+\newblock Available from: \url{https://doi.org/10.1007/s11538-005-9047-7}.
+
+\bibitem{antipyretic_treatment_children}
+Walsh A, Edwards H, Fraser J.
+\newblock Over‐the‐counter medication use for childhood fever: A
+  cross‐sectional study of Australian parents.
+\newblock Journal of Paediatrics and Child Health;43(9):601--606.
+\newblock Available from:
+  \url{https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1440-1754.2007.01161.x}.
+
+\bibitem{IDhumans:dynamics&control}
+Anderson RM, May RM.
+\newblock {Infectious diseases of humans: dynamics and control}.
+\newblock Oxford University Press; 1991.
+
+\bibitem{statsCanada}
+{Population by sex and age group}; 2017.
+\newblock Available from:
+  \url{http://www.statcan.gc.ca/tables-tableaux/sum-som/l01/cst01/demo10a-eng.htm}.
+
+\bibitem{InfluenzaPeriod}
+Fleming DM, Zambon M, Bartelds AI, de~Jong JC.
+\newblock {The duration and magnitude of influenza epidemics: a study of
+  surveillance data from sentinel general practices in England, Wales and the
+  Netherlands.}
+\newblock European journal of epidemiology. 1999 May;15(5):467--473.
+\newblock Available from: \url{http://view.ncbi.nlm.nih.gov/pubmed/10442473}.
+
+\bibitem{InfluenzaLatentPeriod}
+Patrozou E, Mermel LA.
+\newblock {Does Influenza Transmission Occur from Asymptomatic Infection or
+  Prior to Symptom Onset?}
+\newblock Public Health Reports. 2009;124(2):193--196.
+\newblock Available from:
+  \url{http://journals.sagepub.com/doi/10.1177/003335490912400205}.
+
+\bibitem{reproductiveno.influenza}
+Biggerstaff M, Cauchemez S, Reed C, Gambhir M, Finelli L.
+\newblock {Estimates of the reproduction number for seasonal, pandemic, and
+  zoonotic influenza: a systematic review of the literature}.
+\newblock BMC Infectious Diseases. 2014;14:480+.
+\newblock Available from:
+  \url{https://bmcinfectdis.biomedcentral.com/articles/10.1186/1471-2334-14-480/open-peer-review}.
+
+\end{thebibliography}
